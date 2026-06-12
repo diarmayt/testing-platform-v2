@@ -30,7 +30,6 @@ function ResultsJournal() {
   const { t } = useLang();
   const [page, setPage] = React.useState(1);
   const [fDate, setFDate] = React.useState('');
-  const [fSession, setFSession] = React.useState('');
   const [fProfession, setFProfession] = React.useState('');
   const [fTheory, setFTheory] = React.useState('');
   const [fPractice, setFPractice] = React.useState('');
@@ -82,7 +81,7 @@ function ResultsJournal() {
       React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 24, flexWrap: 'wrap' } },
         React.createElement('div', null,
           React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Журнал результатов', 'Нәтижелер журналы')),
-          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Итоги процедур оценки квалификации', 'Біліктілікті бағалау рәсімдерінің қорытындылары')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Результаты тестирований', 'Біліктілікті бағалау рәсімдерінің қорытындылары')),
         ),
         React.createElement('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' } },
           React.createElement(Btn, { variant: 'secondary', size: 'sm', icon: Icons.download, onClick: () => window.location.href = 'report-day.html' }, t('Отчёт за день', 'Күндік есеп')),
@@ -96,12 +95,11 @@ function ResultsJournal() {
         React.createElement('span', { style: { fontSize: 13, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.04em', textTransform: 'uppercase', marginRight: 4 } }, Icons.filter),
         React.createElement('input', { type: 'date', value: fDate, onChange: e => setFDate(e.target.value),
           style: { height: 40, padding: '0 12px', fontFamily: 'var(--font-body)', fontSize: 14, color: fDate ? 'var(--ink)' : 'var(--muted)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none', cursor: 'pointer' } }),
-        React.createElement(FilterSel, { placeholder: t('Все сессии', 'Барлық сессиялар'), value: fSession, onChange: setFSession, options: [t('Сессия 1','1-сессия'), t('Сессия 2','2-сессия'), t('Утренняя группа','Таңғы топ'), t('Вечерняя группа','Кешкі топ')] }),
         React.createElement(FilterSel, { placeholder: t('Все профессии', 'Барлық кәсіптер'), value: fProfession, onChange: setFProfession, options: [t('Инженер по ИВС','ИВЖ инженері'), t('Администратор БД','ДҚ әкімшісі'), t('Системный администратор','Жүйелік әкімші'), t('Сетевой администратор','Желілік әкімші'), t('Специалист по ИБ','АҚ маманы')] }),
         React.createElement(FilterSel, { placeholder: t('Тест: все', 'Тест: барлығы'), value: fTheory, onChange: setFTheory, options: [{value:'pass',label:t('Сдал','Тапсырды')},{value:'fail',label:t('Не сдал','Тапсырмады')}] }),
         React.createElement(FilterSel, { placeholder: t('Практика: все', 'Практика: барлығы'), value: fPractice, onChange: setFPractice, options: [{value:'pass',label:t('Сдал','Тапсырды')},{value:'fail',label:t('Не сдал','Тапсырмады')},{value:'pending',label:t('Не проверено','Тексерілмеді')}] }),
-        (fDate || fSession || fProfession || fTheory || fPractice) &&
-          React.createElement('button', { onClick: () => { setFDate(''); setFSession(''); setFProfession(''); setFTheory(''); setFPractice(''); }, style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--danger)', fontWeight: 600 } }, t('Сбросить', 'Тазалау')),
+        (fDate || fProfession || fTheory || fPractice) &&
+          React.createElement('button', { onClick: () => { setFDate(''); setFProfession(''); setFTheory(''); setFPractice(''); }, style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--danger)', fontWeight: 600 } }, t('Сбросить', 'Тазалау')),
       ),
 
       // Table
@@ -109,7 +107,7 @@ function ResultsJournal() {
         React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse', minWidth: 900 } },
           React.createElement('thead', null,
             React.createElement('tr', null,
-              ['№', t('ФИО','Аты-жөні'), t('Профессия','Кәсіп'), t('ОРК','ҰБС'), t('Язык','Тіл'), t('Тест (%)','Тест (%)'), t('Статус теста','Тест мәртебесі'), t('Практика','Практика'), t('Сессия','Сессия')].map((h, i) =>
+              ['№', t('ФИО','Аты-жөні'), t('Профессия','Кәсіп'), t('ОРК','ҰБС'), t('Язык','Тіл'), t('Тест (%)','Тест (%)'), t('Статус теста','Тест мәртебесі'), t('Практика','Практика'), t('Дата','Күні')].map((h, i) =>
                 React.createElement('th', { key: i, style: { padding: '12px 14px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: i === 0 ? 'center' : 'left', borderBottom: '2px solid var(--border)', whiteSpace: 'nowrap' } }, h)
               )
             )
@@ -134,7 +132,7 @@ function ResultsJournal() {
                 React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)', textAlign: 'center' } }, React.createElement(ScoreCell, { val: r.theory, pass: r.theoryPass })),
                 React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)' } }, React.createElement(TheoryPill, { pass: r.theoryPass })),
                 React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)' } }, React.createElement(PracticePill, { status: r.practiceStatus })),
-                React.createElement('td', { style: { padding: '14px', fontSize: 14, color: 'var(--muted)', borderBottom: '1px solid var(--border)', whiteSpace: 'nowrap' } }, r.session),
+                React.createElement('td', { style: { padding: '14px', fontSize: 14, color: 'var(--muted)', borderBottom: '1px solid var(--border)', whiteSpace: 'nowrap' } }, r.date),
               )
             )
           ),

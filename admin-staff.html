@@ -31,7 +31,6 @@ function RoleBadge({ role }) {
   const map = {
     admin: { bg: 'var(--primary-light)', color: 'var(--primary)', label: t('Администратор', 'Әкімші') },
     expert: { bg: 'var(--accent-light)', color: 'var(--accent)', label: t('Эксперт', 'Сарапшы') },
-    operator: { bg: 'rgba(94,110,107,0.1)', color: 'var(--muted)', label: t('Оператор', 'Оператор') },
   };
   const c = map[role];
   return React.createElement('span', { style: { display: 'inline-flex', padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, background: c.bg, color: c.color } }, c.label);
@@ -40,19 +39,19 @@ function RoleBadge({ role }) {
 function Staff() {
   const { t } = useLang();
   const rows = [
-    { ini: 'ИО', name: t('Оспанов Ислам', 'Оспанов Ислам'), email: 'i.ospanov@satti.kz', role: 'admin', status: 'active', last: t('сейчас', 'қазір') },
+    { ini: 'КК', name: t('Кенжебеков Канат', 'Кенжебеков Канат'), email: 'k.kenzhebekov@satti.kz', role: 'admin', status: 'active', last: t('сейчас', 'қазір') },
     { ini: 'КА', name: t('Касымов Алибек', 'Қасымов Әлібек'), email: 'a.kassymov@satti.kz', role: 'expert', status: 'active', last: t('2 ч назад', '2 сағ бұрын') },
     { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@satti.kz', role: 'expert', status: 'active', last: t('вчера', 'кеше') },
-    { ini: 'НТ', name: t('Нурланова Томирис', 'Нұрланова Томирис'), email: 't.nurlanova@satti.kz', role: 'operator', status: 'active', last: t('3 дня назад', '3 күн бұрын') },
-    { ini: 'СБ', name: t('Сериков Бауыржан', 'Сериков Бауыржан'), email: 'b.serikov@satti.kz', role: 'operator', status: 'invited', last: '—' },
+    { ini: 'НТ', name: t('Нурланова Томирис', 'Нұрланова Томирис'), email: 't.nurlanova@satti.kz', role: 'expert', status: 'active', last: t('3 дня назад', '3 күн бұрын') },
+    { ini: 'СБ', name: t('Сериков Бауыржан', 'Сериков Бауыржан'), email: 'b.serikov@satti.kz', role: 'expert', status: 'invited', last: '—' },
   ];
 
   const perms = [
-    { label: t('Создание и редактирование тестов', 'Тесттерді жасау және өңдеу'), admin: true, expert: false, operator: false },
-    { label: t('Проверка практических заданий', 'Практикалық тапсырмаларды тексеру'), admin: true, expert: true, operator: false },
-    { label: t('Приглашение кандидатов', 'Кандидаттарды шақыру'), admin: true, expert: false, operator: true },
-    { label: t('Просмотр статистики', 'Статистиканы қарау'), admin: true, expert: true, operator: true },
-    { label: t('Управление сотрудниками', 'Қызметкерлерді басқару'), admin: true, expert: false, operator: false },
+    { label: t('Создание и редактирование тестов', 'Тесттерді жасау және өңдеу'), admin: true, expert: true },
+    { label: t('Управление кандидатами', 'Кандидаттарды басқару'), admin: true, expert: true },
+    { label: t('Подтверждение практики и протоколы', 'Практиканы растау және хаттамалар'), admin: true, expert: true },
+    { label: t('Просмотр журнала и отчётов', 'Журнал мен есептерді қарау'), admin: true, expert: true },
+    { label: t('Управление сотрудниками', 'Қызметкерлерді басқару'), admin: true, expert: false },
   ];
 
   const Cell = (on) => React.createElement('div', { style: { display: 'flex', justifyContent: 'center', color: on ? 'var(--success)' : 'var(--border)' } }, on ? Icons.checkCircle : React.createElement('span', { style: { fontSize: 18, color: 'var(--border)' } }, '—'));
@@ -88,7 +87,7 @@ function Staff() {
           React.createElement('thead', null,
             React.createElement('tr', null,
               React.createElement('th', { style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'left', borderBottom: '2px solid var(--border)' } }, t('Разрешение', 'Рұқсат')),
-              [t('Администратор', 'Әкімші'), t('Эксперт', 'Сарапшы'), t('Оператор', 'Оператор')].map(h => React.createElement('th', { key: h, style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', borderBottom: '2px solid var(--border)' } }, h)),
+              [t('Администратор', 'Әкімші'), t('Эксперт', 'Сарапшы')].map(h => React.createElement('th', { key: h, style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', borderBottom: '2px solid var(--border)' } }, h)),
             )
           ),
           React.createElement('tbody', null,
@@ -96,7 +95,6 @@ function Staff() {
               React.createElement('td', { style: { padding: '14px 16px', fontSize: 15, fontWeight: 500, borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, p.label),
               React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.admin)),
               React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.expert)),
-              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.operator)),
             ))
           ),
         ),
@@ -169,25 +167,24 @@ function CommissionSection() {
 function StaffPage() {
   const { t } = useLang();
   const rows = [
-    { ini: 'ИО', name: t('Оспанов Ислам', 'Оспанов Ислам'), email: 'i.ospanov@satti.kz', role: 'admin', status: 'active', last: t('сейчас', 'қазір') },
+    { ini: 'КК', name: t('Кенжебеков Канат', 'Кенжебеков Канат'), email: 'k.kenzhebekov@satti.kz', role: 'admin', status: 'active', last: t('сейчас', 'қазір') },
     { ini: 'КА', name: t('Касымов Алибек', 'Қасымов Әлібек'), email: 'a.kassymov@satti.kz', role: 'expert', status: 'active', last: t('2 ч назад', '2 сағ бұрын') },
     { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@satti.kz', role: 'expert', status: 'active', last: t('вчера', 'кеше') },
-    { ini: 'НТ', name: t('Нурланова Томирис', 'Нұрланова Томирис'), email: 't.nurlanova@satti.kz', role: 'operator', status: 'active', last: t('3 дня назад', '3 күн бұрын') },
-    { ini: 'СБ', name: t('Сериков Бауыржан', 'Сериков Бауыржан'), email: 'b.serikov@satti.kz', role: 'operator', status: 'invited', last: '—' },
+    { ini: 'НТ', name: t('Нурланова Томирис', 'Нұрланова Томирис'), email: 't.nurlanova@satti.kz', role: 'expert', status: 'active', last: t('3 дня назад', '3 күн бұрын') },
+    { ini: 'СБ', name: t('Сериков Бауыржан', 'Сериков Бауыржан'), email: 'b.serikov@satti.kz', role: 'expert', status: 'invited', last: '—' },
   ];
 
   const roleMap = {
     admin: { bg: 'var(--primary-light)', color: 'var(--primary)', label: t('Администратор', 'Әкімші') },
     expert: { bg: 'var(--accent-light)', color: 'var(--accent)', label: t('Эксперт', 'Сарапшы') },
-    operator: { bg: 'rgba(94,110,107,0.1)', color: 'var(--muted)', label: t('Оператор', 'Оператор') },
   };
 
   const perms = [
-    { label: t('Создание и редактирование тестов', 'Тесттерді жасау және өңдеу'), admin: true, expert: false, operator: false },
-    { label: t('Проверка практических заданий', 'Практикалық тапсырмаларды тексеру'), admin: true, expert: true, operator: false },
-    { label: t('Приглашение кандидатов', 'Кандидаттарды шақыру'), admin: true, expert: false, operator: true },
-    { label: t('Просмотр статистики', 'Статистиканы қарау'), admin: true, expert: true, operator: true },
-    { label: t('Управление сотрудниками', 'Қызметкерлерді басқару'), admin: true, expert: false, operator: false },
+    { label: t('Создание и редактирование тестов', 'Тесттерді жасау және өңдеу'), admin: true, expert: true },
+    { label: t('Управление кандидатами', 'Кандидаттарды басқару'), admin: true, expert: true },
+    { label: t('Подтверждение практики и протоколы', 'Практиканы растау және хаттамалар'), admin: true, expert: true },
+    { label: t('Просмотр журнала и отчётов', 'Журнал мен есептерді қарау'), admin: true, expert: true },
+    { label: t('Управление сотрудниками', 'Қызметкерлерді басқару'), admin: true, expert: false },
   ];
 
   const Cell = (on) => React.createElement('div', { style: { display: 'flex', justifyContent: 'center', color: on ? 'var(--success)' : 'var(--border)' } }, on ? Icons.checkCircle : React.createElement('span', { style: { fontSize: 18, color: 'var(--border)' } }, '—'));
@@ -223,7 +220,7 @@ function StaffPage() {
           React.createElement('thead', null,
             React.createElement('tr', null,
               React.createElement('th', { style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'left', borderBottom: '2px solid var(--border)' } }, t('Разрешение', 'Рұқсат')),
-              [t('Администратор', 'Әкімші'), t('Эксперт', 'Сарапшы'), t('Оператор', 'Оператор')].map(h => React.createElement('th', { key: h, style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', borderBottom: '2px solid var(--border)' } }, h)),
+              [t('Администратор', 'Әкімші'), t('Эксперт', 'Сарапшы')].map(h => React.createElement('th', { key: h, style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', borderBottom: '2px solid var(--border)' } }, h)),
             )
           ),
           React.createElement('tbody', null,
@@ -231,7 +228,6 @@ function StaffPage() {
               React.createElement('td', { style: { padding: '14px 16px', fontSize: 15, fontWeight: 500, borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, p.label),
               React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.admin)),
               React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.expert)),
-              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.operator)),
             ))
           ),
         ),

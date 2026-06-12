@@ -71,7 +71,7 @@ function CreateTest() {
     React.createElement('div', { style: { maxWidth: 820, margin: '0 auto', padding: '32px 28px' } },
       React.createElement(Breadcrumb, { items: [t('Банк тестов', 'Тест банкі'), t('Новый тест', 'Жаңа тест')] }),
       React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Создание теста', 'Тест жасау')),
-      React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)', marginBottom: 28 } }, t('Настройте параметры процедуры оценки квалификации', 'Біліктілікті бағалау рәсімінің параметрлерін реттеңіз')),
+      React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)', marginBottom: 28 } }, t('Настройте параметры теста', 'Біліктілікті бағалау рәсімінің параметрлерін реттеңіз')),
 
       // Block 1: Basics
       React.createElement(Card, { style: { marginBottom: 20 } },
@@ -110,7 +110,7 @@ function CreateTest() {
           options: [{ value: 'ru', label: 'Русский' }, { value: 'kz', label: 'Қазақша' }],
         }),
 
-        React.createElement(FormTextarea, { label: t('Описание', 'Сипаттама'), placeholder: t('Краткое описание процедуры и требований…', 'Рәсім мен талаптардың қысқаша сипаттамасы…'), rows: 3 }),
+        React.createElement(FormTextarea, { label: t('Описание', 'Сипаттама'), placeholder: t('Краткое описание теста и требований…', 'Рәсім мен талаптардың қысқаша сипаттамасы…'), rows: 3 }),
       ),
 
       // Block 2: Theory

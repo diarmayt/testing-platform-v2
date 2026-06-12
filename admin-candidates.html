@@ -37,20 +37,6 @@ function SearchBar({ placeholder, value, onChange }) {
   );
 }
 
-// Combobox — datalist-based: shows preset options + allows free text input
-function SessionCombobox({ value, onChange, listId }) {
-  const { t } = useLang();
-  const presets = [t('Сессия 1','1-сессия'), t('Сессия 2','2-сессия'), t('Сессия 3','3-сессия'), t('Утренняя группа','Таңғы топ'), t('Вечерняя группа','Кешкі топ')];
-  const inputSt = { width: 148, height: 34, padding: '0 10px', fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' };
-  return React.createElement('div', { onClick: e => e.stopPropagation() },
-    React.createElement('input', { list: listId, value, placeholder: t('— выбрать —','— таңдау —'), onChange: e => onChange(e.target.value), style: inputSt,
-      onFocus: e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(15,118,110,0.1)'; },
-      onBlur: e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; },
-    }),
-    React.createElement('datalist', { id: listId }, presets.map(p => React.createElement('option', { key: p, value: p }))),
-  );
-}
-
 // Language pill
 function LangPill({ lang }) {
   const ru = lang === 'ru';
@@ -61,15 +47,13 @@ function Candidates() {
   const { t } = useLang();
   const [q, setQ] = React.useState('');
   const [page, setPage] = React.useState(1);
-  const [sessions, setSessions] = React.useState({});
-
   const rowsBase = [
-    { ini: 'АН', name: t('Ахметов Нурлан', 'Ахметов Нұрлан'), email: 'n.akhmetov@example.kz', test: 'Сетевой администратор', st: 'active', stage: t('ТЕОРИЯ', 'ТЕОРИЯ'), date: t('14 окт 2026', '14 қаз 2026'), lang: 'ru' },
-    { ini: 'СК', name: t('Смагулова Камила', 'Смағұлова Камила'), email: 'k.smagulova@example.kz', test: 'Специалист по ИБ', st: 'passed', stage: t('ПРОЙДЕНО', 'ӨТТІ'), date: t('14 окт 2026', '14 қаз 2026'), lang: 'kz' },
-    { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@example.kz', test: 'Системный администратор', st: 'passed', stage: t('ПРОЙДЕНО', 'ӨТТІ'), date: t('13 окт 2026', '13 қаз 2026'), lang: 'ru' },
-    { ini: 'БМ', name: t('Бекжанов Мурат', 'Бекжанов Мұрат'), email: 'm.bekzhanov@example.kz', test: 'Администратор БД', st: 'failed', stage: t('НЕ ПРОЙДЕНО', 'ӨТПЕДІ'), date: t('12 окт 2026', '12 қаз 2026'), lang: 'kz' },
-    { ini: 'ИС', name: t('Исаева Сауле', 'Исаева Сәуле'), email: 's.isayeva@example.kz', test: 'Инженер по ИВС', st: 'failed', stage: t('НЕ ПРОЙДЕНО', 'ӨТПЕДІ'), date: t('11 окт 2026', '11 қаз 2026'), lang: 'ru' },
-    { ini: 'ТА', name: t('Тулеуов Арман', 'Төлеуов Арман'), email: 'a.tuleuov@example.kz', test: 'Сетевой администратор', st: 'passed', stage: t('ПРОЙДЕНО', 'ӨТТІ'), date: t('10 окт 2026', '10 қаз 2026'), lang: 'kz' },
+    { ini: 'АН', name: t('Ахметов Нурлан', 'Ахметов Нұрлан'), email: 'n.akhmetov@example.kz', test: 'Сетевой администратор', st: 'completed', stage: t('Завершён', 'Аяқталды'), date: t('14 окт 2026', '14 қаз 2026'), lang: 'ru' },
+    { ini: 'СК', name: t('Смагулова Камила', 'Смағұлова Камила'), email: 'k.smagulova@example.kz', test: 'Специалист по ИБ', st: 'completed', stage: t('Завершён', 'Аяқталды'), date: t('14 окт 2026', '14 қаз 2026'), lang: 'kz' },
+    { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@example.kz', test: 'Системный администратор', st: 'completed', stage: t('Завершён', 'Аяқталды'), date: t('13 окт 2026', '13 қаз 2026'), lang: 'ru' },
+    { ini: 'БМ', name: t('Бекжанов Мурат', 'Бекжанов Мұрат'), email: 'm.bekzhanov@example.kz', test: 'Администратор БД', st: 'completed', stage: t('Завершён', 'Аяқталды'), date: t('12 окт 2026', '12 қаз 2026'), lang: 'kz' },
+    { ini: 'ИС', name: t('Исаева Сауле', 'Исаева Сәуле'), email: 's.isayeva@example.kz', test: 'Инженер по ИВС', st: 'assigned', stage: t('Назначен', 'Тағайындалды'), date: t('11 окт 2026', '11 қаз 2026'), lang: 'ru' },
+    { ini: 'ТА', name: t('Тулеуов Арман', 'Төлеуов Арман'), email: 'a.tuleuov@example.kz', test: 'Сетевой администратор', st: 'assigned', stage: t('Назначен', 'Тағайындалды'), date: t('10 окт 2026', '10 қаз 2026'), lang: 'kz' },
   ].map((r, i) => ({ ...r, idx: i }));
 
   return React.createElement(AdminShell, { active: 'candidates' },
@@ -77,7 +61,7 @@ function Candidates() {
       React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 24, flexWrap: 'wrap' } },
         React.createElement('div', null,
           React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Кандидаты', 'Кандидаттар')),
-          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Управление участниками процедур оценки', 'Бағалау рәсімдеріне қатысушыларды басқару')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Управление кандидатами', 'Бағалау рәсімдеріне қатысушыларды басқару')),
         ),
         React.createElement(Btn, { icon: Icons.plus, onClick: () => {} }, t('Добавить кандидата', 'Кандидат қосу')),
       ),
@@ -85,7 +69,7 @@ function Candidates() {
       // Toolbar
       React.createElement('div', { style: { display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' } },
         React.createElement(SearchBar, { placeholder: t('Поиск по имени или email…', 'Аты немесе email бойынша іздеу…'), value: q, onChange: setQ }),
-        React.createElement(FormSelect, { value: '', onChange: () => {}, placeholder: t('Все статусы', 'Барлық мәртебелер'), options: [t('Активные', 'Белсенді'), t('Пройдено', 'Өтті'), t('Не пройдено', 'Өтпеді')] }),
+        React.createElement(FormSelect, { value: '', onChange: () => {}, placeholder: t('Все статусы', 'Барлық мәртебелер'), options: [t('Назначен', 'Тағайындалды'), t('Завершён', 'Аяқталды')] }),
         React.createElement(FormSelect, { value: '', onChange: () => {}, placeholder: t('Все тесты', 'Барлық тестер'), options: ['Сетевой администратор', 'Системный администратор', 'Data Scientist'] }),
       ),
 
@@ -96,7 +80,6 @@ function Candidates() {
           { key: 'name', label: t('Кандидат', 'Кандидат'), render: r => React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } }, React.createElement(Avatar, { initials: r.ini, size: 36 }), React.createElement('div', { style: { minWidth: 0 } }, React.createElement('div', { style: { fontWeight: 600, whiteSpace: 'nowrap' } }, r.name), React.createElement('div', { style: { fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.email))) },
           { key: 'test', label: t('Тест', 'Тест'), render: r => React.createElement('span', { style: { whiteSpace: 'nowrap', fontSize: 14 } }, r.test) },
           { key: 'lang', label: t('Язык', 'Тіл'), render: r => React.createElement(LangPill, { lang: r.lang }) },
-          { key: 'session', label: t('Сессия', 'Сессия'), render: r => React.createElement(SessionCombobox, { listId: 'sl-' + r.idx, value: sessions[r.idx] || '', onChange: v => setSessions(s => ({ ...s, [r.idx]: v })) }) },
           { key: 'stage', label: t('Статус', 'Мәртебесі'), render: r => React.createElement(StatusPill, { status: r.st, label: r.stage }) },
           { key: 'date', label: t('Обновлено', 'Жаңартылды'), render: r => React.createElement('span', { style: { color: 'var(--muted)', whiteSpace: 'nowrap', fontSize: 13 } }, r.date) },
           { key: 'a', label: '', render: r => React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', display: 'flex' } }, Icons.chevronRight) },

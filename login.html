@@ -547,7 +547,7 @@ body {
 <!-- ========== FOOTER ========== -->
 <footer class="footer">
   <p class="footer-note" id="footerNote">
-    Доступ ограничен. Система предназначена только для приглашённых участников процедуры оценки квалификации.
+    Доступ ограничен. Система предназначена только для приглашённых кандидатов.
   </p>
   <div class="footer-links">
     <a href="#" id="footerPrivacy">Конфиденциальность</a>
@@ -569,7 +569,7 @@ const translations = {
     passwordLabel: 'Пароль',
     forgotLink: 'Забыли пароль?',
     submitText: 'Войти',
-    footerNote: 'Доступ ограничен. Система предназначена только для приглашённых участников процедуры оценки квалификации.',
+    footerNote: 'Доступ ограничен. Система предназначена только для приглашённых кандидатов.',
     footerPrivacy: 'Конфиденциальность',
     footerTerms: 'Условия использования',
     footerSupport: 'Служба поддержки',
@@ -694,7 +694,7 @@ form.addEventListener('submit', (e) => {
     // Simulate login
     setTimeout(() => {
       submitBtn.classList.remove('loading');
-      // In a real app, redirect to dashboard
+      window.location.href = 'test-start.html';
     }, 1500);
   }
 });
