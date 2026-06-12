@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Редактор вопросов — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function QuestionEditor() {
+  const { t } = useLang();
+
+  const questions = [
+    { n: 1, text: t('Какой уровень модели OSI отвечает за маршрутизацию пакетов?', 'OSI моделінің қай деңгейі пакеттерді маршруттауға жауапты?'), type: t('Один ответ', 'Бір жауап') },
+    { n: 2, text: t('Что делает протокол DHCP?', 'DHCP хаттамасы не істейді?'), type: t('Один ответ', 'Бір жауап') },
+    { n: 3, text: t('Какие протоколы работают на транспортном уровне?', 'Тасымалдау деңгейінде қандай хаттамалар жұмыс істейді?'), type: t('Несколько', 'Бірнеше') },
+    { n: 4, text: t('Какая маска подсети соответствует префиксу /24?', '/24 префиксіне қандай ішкі желі маскасы сәйкес келеді?'), type: t('Один ответ', 'Бір жауап') },
+  ];
+
+  const allOpts = {
+    1: [
+      { id: 1, text: t('Канальный', 'Деректер тізбегі'), correct: false },
+      { id: 2, text: t('Сетевой', 'Желілік'), correct: true },
+      { id: 3, text: t('Транспортный', 'Тасымалдау'), correct: false },
+    ],
+    2: [
+      { id: 1, text: t('Автоматически назначает IP-адреса', 'IP-мекенжайларды автоматты түрде тағайындайды'), correct: true },
+      { id: 2, text: t('Шифрует сетевой трафик', 'Желілік трафикті шифрлайды'), correct: false },
+      { id: 3, text: t('Маршрутизирует пакеты между сетями', 'Желілер арасындағы пакеттерді маршруттайды'), correct: false },
+    ],
+    3: [
+      { id: 1, text: 'TCP', correct: true },
+      { id: 2, text: 'UDP', correct: true },
+      { id: 3, text: 'HTTP', correct: false },
+    ],
+    4: [
+      { id: 1, text: '255.255.255.0', correct: true },
+      { id: 2, text: '255.255.0.0', correct: false },
+      { id: 3, text: '255.0.0.0', correct: false },
+    ],
+  };
+
+  const [activeQ, setActiveQ] = React.useState(2);
+  const [opts, setOpts] = React.useState(allOpts[2]);
+  const [qtext, setQtext] = React.useState(questions[1].text);
+  const [qtype, setQtype] = React.useState('single');
+
+  function switchQ(n) {
+    const q = questions[n - 1];
+    setActiveQ(n);
+    setQtext(q.text);
+    setOpts(allOpts[n]);
+    setQtype(n === 3 ? 'multi' : 'single');
+  }
+
+  return React.createElement(AdminShell, { active: 'tests' },
+    React.createElement('div', { style: { maxWidth: 1100, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement(Breadcrumb, { items: [t('Банк тестов', 'Тест банкі'), t('Сетевой администратор · Уровень 5', 'Желілік әкімші · Деңгей 5'), t('Вопросы', 'Сұрақтар')] }),
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Редактор вопросов', 'Сұрақтар редакторы')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Сетевой администратор · Уровень 5 · 4 вопроса в банке', 'Желілік әкімші · Деңгей 5 · банкте 4 сұрақ')),
+        ),
+        React.createElement(Btn, { variant: 'secondary', iconRight: Icons.checkCircle, onClick: () => window.location.href = 'admin-tests.html' }, t('Опубликовать тест', 'Тестті жариялау')),
+      ),
+
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '300px minmax(0, 1fr)', gap: 24, alignItems: 'start' }, className: 'qe-grid' },
+        // Left: question list
+        React.createElement(Card, { padding: 16 },
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 } },
+            React.createElement('span', { style: { fontSize: 14, fontWeight: 700, letterSpacing: '0.03em', textTransform: 'uppercase', color: 'var(--muted)' } }, t('Вопросы', 'Сұрақтар')),
+            React.createElement(Btn, { size: 'sm', icon: Icons.plus }, t('Добавить', 'Қосу')),
+          ),
+          React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 8 } },
+            questions.map(q => React.createElement('button', { key: q.n, onClick: () => switchQ(q.n),
+              style: { textAlign: 'left', padding: '12px 14px', borderRadius: 10, border: '1px solid ' + (activeQ === q.n ? 'var(--primary)' : 'var(--border)'), background: activeQ === q.n ? 'var(--primary-lighter)' : 'var(--surface)', cursor: 'pointer', transition: 'all 0.15s', display: 'flex', gap: 12, alignItems: 'flex-start' } },
+              React.createElement('span', { style: { width: 24, height: 24, borderRadius: 6, background: activeQ === q.n ? 'var(--primary)' : 'var(--border)', color: activeQ === q.n ? '#fff' : 'var(--muted)', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 } }, q.n),
+              React.createElement('span', { style: { minWidth: 0 } },
+                React.createElement('span', { style: { display: 'block', fontSize: 14, fontWeight: 500, lineHeight: 1.35, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } }, q.text),
+                React.createElement('span', { style: { display: 'block', fontSize: 12, color: 'var(--muted)', marginTop: 3 } }, q.type),
+              ),
+            )),
+          ),
+        ),
+
+        // Right: editor
+        React.createElement(Card, { padding: 28 },
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 20 } },
+            React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 600, whiteSpace: 'nowrap' } }, t('Вопрос', 'Сұрақ') + ' ' + activeQ),
+            React.createElement('button', { style: { display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'var(--danger)', fontSize: 14, fontWeight: 600, cursor: 'pointer' } }, Icons.trash, t('Удалить', 'Жою')),
+          ),
+
+          React.createElement('div', { style: { display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' } },
+            [{ id: 'single', l: t('Один ответ', 'Бір жауап') }, { id: 'multi', l: t('Несколько', 'Бірнеше') }].map(tp =>
+              React.createElement('button', { key: tp.id, onClick: () => setQtype(tp.id),
+                style: { padding: '8px 16px', borderRadius: 999, border: '1px solid ' + (qtype === tp.id ? 'var(--primary)' : 'var(--border)'), background: qtype === tp.id ? 'var(--primary)' : 'var(--surface)', color: qtype === tp.id ? '#fff' : 'var(--ink)', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' } }, tp.l))
+          ),
+
+          React.createElement(FormTextarea, { label: t('Текст вопроса', 'Сұрақ мәтіні'), value: qtext, onChange: setQtext, rows: 3 }),
+
+          React.createElement('div', null,
+            React.createElement('label', { style: { display: 'block', fontSize: 14, fontWeight: 600, marginBottom: 8 } }, t('Варианты ответа', 'Жауап нұсқалары')),
+            React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 } },
+              opts.map((o, i) => React.createElement('div', { key: o.id,
+                style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', border: '1px solid ' + (o.correct ? 'var(--success)' : 'var(--border)'), borderRadius: 10, background: o.correct ? 'var(--success-light)' : 'var(--surface)' } },
+                React.createElement('button', {
+                  onClick: () => setOpts(os => os.map((x, j) => qtype === 'single' ? ({...x, correct: j === i}) : (j === i ? {...x, correct: !x.correct} : x))),
+                  style: { width: 24, height: 24, borderRadius: qtype === 'single' ? '50%' : 6, border: '2px solid ' + (o.correct ? 'var(--success)' : 'var(--border)'), background: o.correct ? 'var(--success)' : 'transparent', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 } },
+                  o.correct && Icons.check),
+                React.createElement('input', { value: o.text, onChange: e => setOpts(os => os.map((x, j) => j === i ? {...x, text: e.target.value} : x)),
+                  style: { flex: 1, border: 'none', background: 'none', outline: 'none', fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--ink)' } }),
+                React.createElement('button', { onClick: () => setOpts(os => os.filter((_, j) => j !== i)), style: { background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', display: 'flex', flexShrink: 0 } }, Icons.trash),
+              ))
+            ),
+            React.createElement(Btn, { variant: 'ghost', size: 'sm', icon: Icons.plus, onClick: () => setOpts(os => [...os, { id: Date.now(), text: '', correct: false }]) }, t('Добавить вариант', 'Нұсқа қосу')),
+          ),
+
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--border)' } },
+            React.createElement(FormSelect, { value: '1', onChange: () => {}, options: [{value:'1',label:t('Сложность: средняя','Қиындық: орташа')},{value:'2',label:t('Сложность: высокая','Қиындық: жоғары')}] }),
+            React.createElement(Btn, { icon: Icons.save }, t('Сохранить вопрос', 'Сұрақты сақтау')),
+          ),
+        ),
+      ),
+      React.createElement('style', null, '@media (max-width: 860px){ .qe-grid{ grid-template-columns: 1fr !important; } }'),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(QuestionEditor));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

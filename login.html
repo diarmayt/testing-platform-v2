@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вход — СӘТТІ</title>
+
+<!-- Fonts: Lora (headings) + Manrope (UI) with cyrillic-ext for Kazakh glyphs -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap&subset=cyrillic,cyrillic-ext,latin" rel="stylesheet">
+
+<style>
+/* ============================================
+   СӘТТІ Design System Tokens
+   Source of truth: DESIGN.md
+   ============================================ */
+:root {
+  /* Colors */
+  --bg: #FBFAF7;
+  --surface: #FFFFFF;
+  --ink: #16302E;
+  --muted: #5E6E6B;
+  --border: #E7E3DB;
+  --primary: #0F766E;
+  --primary-hover: #0C5F58;
+  --accent: #B68A2E;
+  --success: #167A3C;
+  --danger: #B3261E;
+
+  /* Typography */
+  --font-heading: 'Lora', 'PT Serif', Georgia, serif;
+  --font-body: 'Manrope', 'PT Sans', system-ui, sans-serif;
+
+  /* Sizes */
+  --hero: 56px;
+  --h1: 32px;
+  --h2: 24px;
+  --h3: 20px;
+  --question: 20px;
+  --body: 16px;
+  --small: 14px;
+
+  /* Spacing */
+  --space-base: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  /* Layout */
+  --container-max: 1200px;
+  --readable-max: 720px;
+
+  /* Radii */
+  --radius-btn: 10px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(22,48,46,0.04), 0 4px 24px rgba(22,48,46,0.06);
+  --shadow-card-hover: 0 1px 2px rgba(22,48,46,0.06), 0 8px 32px rgba(22,48,46,0.08);
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   Shared Header
+   ============================================ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+@media (min-width: 640px) {
+  .header { padding: var(--space-md) var(--space-xl); }
+}
+
+.header-logo {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.lang-btn {
+  font-family: var(--font-body);
+  font-size: var(--small);
+  font-weight: 600;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.lang-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.lang-btn:not(.active):hover {
+  color: var(--ink);
+  background: rgba(15,118,110,0.06);
+}
+
+/* ============================================
+   Main Content Area
+   ============================================ */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md);
+}
+
+/* ============================================
+   Card
+   ============================================ */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 440px;
+}
+
+@media (min-width: 640px) {
+  .card { padding: var(--space-xxl) 40px; }
+}
+
+/* ============================================
+   Login Form Typography
+   ============================================ */
+.login-title {
+  font-family: var(--font-heading);
+  font-size: var(--h1);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: var(--space-xs);
+}
+
+.login-subtitle {
+  font-size: var(--body);
+  color: var(--muted);
+  margin-bottom: var(--space-xl);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Form Elements
+   ============================================ */
+.form-group {
+  margin-bottom: var(--space-lg);
+}
+
+.form-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+
+.form-label-text {
+  font-size: var(--small);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.form-link {
+  font-size: var(--small);
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.form-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--space-md);
+  font-family: var(--font-body);
+  font-size: var(--body);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15,118,110,0.1);
+}
+
+.form-input:hover:not(:focus) {
+  border-color: #c4bfb5;
+}
+
+.form-input.has-icon {
+  padding-right: 44px;
+}
+
+.input-icon-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.input-icon-btn:hover {
+  color: var(--ink);
+}
+
+.input-icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ============================================
+   Buttons (Design System Standard)
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 44px;
+  padding: 0 var(--space-lg);
+  font-family: var(--font-body);
+  font-size: var(--body);
+  font-weight: 600;
+  border-radius: var(--radius-btn);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  background: rgba(15,118,110,0.04);
+}
+
+/* ============================================
+   Form Error State
+   ============================================ */
+.form-input.error {
+  border-color: var(--danger);
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(179,38,30,0.1);
+}
+
+.form-error {
+  font-size: var(--small);
+  color: var(--danger);
+  margin-top: var(--space-xs);
+  display: none;
+}
+
+.form-error.visible {
+  display: block;
+}
+
+/* ============================================
+   Shared Footer
+   ============================================ */
+.footer {
+  text-align: center;
+  padding: var(--space-lg) var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.footer-note {
+  font-size: var(--small);
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: var(--readable-max);
+  margin: 0 auto;
+}
+
+.footer-note a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-note a:hover {
+  text-decoration: underline;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-size: var(--small);
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--primary);
+}
+
+.footer-copy {
+  font-size: var(--small);
+  color: var(--muted);
+  margin-top: var(--space-md);
+  line-height: 1.4;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* ============================================
+   Loading state for button
+   ============================================ */
+.btn-primary.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.btn-primary.loading .btn-text { opacity: 0; }
+
+.btn-primary .spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  position: absolute;
+}
+
+.btn-primary.loading .spinner { display: block; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+
+<!-- ========== HEADER ========== -->
+<header class="header">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="index.html" class="header-logo" id="logoText">СӘТТІ</a>
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;transition:border-color .15s,color .15s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Все экраны</a>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="ru" id="langRu">Рус</button>
+    <button class="lang-btn" data-lang="kz" id="langKz">Қаз</button>
+  </div>
+</header>
+
+<!-- ========== MAIN ========== -->
+<main class="main">
+  <div class="card">
+    <h1 class="login-title" id="loginTitle">Вход</h1>
+    <p class="login-subtitle" id="loginSubtitle">Добро пожаловать в систему сертификации</p>
+
+    <form id="loginForm" novalidate>
+      <!-- Email -->
+      <div class="form-group">
+        <div class="form-label">
+          <span class="form-label-text" id="emailLabel">Email</span>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            class="form-input"
+            id="emailInput"
+            placeholder="example@domain.com"
+            autocomplete="email"
+            required
+          >
+        </div>
+        <div class="form-error" id="emailError">Введите корректный email</div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <div class="form-label">
+          <span class="form-label-text" id="passwordLabel">Пароль</span>
+          <a href="#" class="form-link" id="forgotLink">Забыли пароль?</a>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            class="form-input has-icon"
+            id="passwordInput"
+            placeholder="Введите ваш пароль"
+            autocomplete="current-password"
+            required
+          >
+          <button type="button" class="input-icon-btn" id="togglePassword" aria-label="Показать пароль">
+            <!-- Eye icon (show) -->
+            <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <!-- Eye-off icon (hide) -->
+            <svg id="eyeOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="form-error" id="passwordError">Введите пароль</div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary" id="submitBtn" style="position:relative">
+        <span class="btn-text" id="submitText">Войти</span>
+        <span class="spinner"></span>
+      </button>
+    </form>
+  </div>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+  <p class="footer-note" id="footerNote">
+    Доступ ограничен. Система предназначена только для приглашённых участников процедуры оценки квалификации.
+  </p>
+  <div class="footer-links">
+    <a href="#" id="footerPrivacy">Конфиденциальность</a>
+    <a href="#" id="footerTerms">Условия использования</a>
+    <a href="#" id="footerSupport">Служба поддержки</a>
+  </div>
+  <p class="footer-copy">© 2026 ТОО «Центр сертификации ІТ-специалистов «СӘТТІ»»</p>
+</footer>
+
+<script>
+// ============================================
+// Language switching (Рус / Қаз)
+// ============================================
+const translations = {
+  ru: {
+    loginTitle: 'Вход',
+    loginSubtitle: 'Добро пожаловать в систему сертификации',
+    emailLabel: 'Email',
+    passwordLabel: 'Пароль',
+    forgotLink: 'Забыли пароль?',
+    submitText: 'Войти',
+    footerNote: 'Доступ ограничен. Система предназначена только для приглашённых участников процедуры оценки квалификации.',
+    footerPrivacy: 'Конфиденциальность',
+    footerTerms: 'Условия использования',
+    footerSupport: 'Служба поддержки',
+    emailPlaceholder: 'example@domain.com',
+    passwordPlaceholder: 'Введите ваш пароль',
+    emailError: 'Введите корректный email',
+    passwordError: 'Введите пароль',
+  },
+  kz: {
+    loginTitle: 'Кіру',
+    loginSubtitle: 'Сертификаттау жүйесіне қош келдіңіз',
+    emailLabel: 'Email',
+    passwordLabel: 'Құпия сөз',
+    forgotLink: 'Құпия сөзді ұмыттыңыз ба?',
+    submitText: 'Кіру',
+    footerNote: 'Қол жетімділік шектеулі. Жүйе біліктілікті бағалау рәсіміне шақырылған қатысушыларға ғана арналған.',
+    footerPrivacy: 'Құпиялылық',
+    footerTerms: 'Пайдалану шарттары',
+    footerSupport: 'Қолдау қызметі',
+    emailPlaceholder: 'example@domain.com',
+    passwordPlaceholder: 'Құпия сөзіңізді енгізіңіз',
+    emailError: 'Дұрыс email енгізіңіз',
+    passwordError: 'Құпия сөзді енгізіңіз',
+  }
+};
+
+let currentLang = 'ru';
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = translations[lang];
+  
+  document.getElementById('loginTitle').textContent = t.loginTitle;
+  document.getElementById('loginSubtitle').textContent = t.loginSubtitle;
+  document.getElementById('emailLabel').textContent = t.emailLabel;
+  document.getElementById('passwordLabel').textContent = t.passwordLabel;
+  document.getElementById('forgotLink').textContent = t.forgotLink;
+  document.getElementById('submitText').textContent = t.submitText;
+  document.getElementById('footerNote').textContent = t.footerNote;
+  document.getElementById('footerPrivacy').textContent = t.footerPrivacy;
+  document.getElementById('footerTerms').textContent = t.footerTerms;
+  document.getElementById('footerSupport').textContent = t.footerSupport;
+  document.getElementById('emailInput').placeholder = t.emailPlaceholder;
+  document.getElementById('passwordInput').placeholder = t.passwordPlaceholder;
+  document.getElementById('emailError').textContent = t.emailError;
+  document.getElementById('passwordError').textContent = t.passwordError;
+
+  document.documentElement.lang = lang === 'kz' ? 'kk' : 'ru';
+  
+  // Update active button
+  document.getElementById('langRu').classList.toggle('active', lang === 'ru');
+  document.getElementById('langKz').classList.toggle('active', lang === 'kz');
+}
+
+document.getElementById('langRu').addEventListener('click', () => setLang('ru'));
+document.getElementById('langKz').addEventListener('click', () => setLang('kz'));
+
+// ============================================
+// Password visibility toggle
+// ============================================
+const toggleBtn = document.getElementById('togglePassword');
+const passInput = document.getElementById('passwordInput');
+const eyeOff = document.getElementById('eyeOff');
+const eyeOn = document.getElementById('eyeOn');
+
+toggleBtn.addEventListener('click', () => {
+  const isPassword = passInput.type === 'password';
+  passInput.type = isPassword ? 'text' : 'password';
+  eyeOff.style.display = isPassword ? 'none' : 'block';
+  eyeOn.style.display = isPassword ? 'block' : 'none';
+});
+
+// ============================================
+// Form validation & submit simulation
+// ============================================
+const form = document.getElementById('loginForm');
+const emailInput = document.getElementById('emailInput');
+const emailError = document.getElementById('emailError');
+const passwordError = document.getElementById('passwordError');
+const submitBtn = document.getElementById('submitBtn');
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function clearErrors() {
+  emailInput.classList.remove('error');
+  passInput.classList.remove('error');
+  emailError.classList.remove('visible');
+  passwordError.classList.remove('visible');
+}
+
+// Clear error on input
+emailInput.addEventListener('input', () => {
+  emailInput.classList.remove('error');
+  emailError.classList.remove('visible');
+});
+passInput.addEventListener('input', () => {
+  passInput.classList.remove('error');
+  passwordError.classList.remove('visible');
+});
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  clearErrors();
+  let valid = true;
+
+  if (!validateEmail(emailInput.value.trim())) {
+    emailInput.classList.add('error');
+    emailError.classList.add('visible');
+    valid = false;
+  }
+
+  if (!passInput.value.trim()) {
+    passInput.classList.add('error');
+    passwordError.classList.add('visible');
+    valid = false;
+  }
+
+  if (valid) {
+    submitBtn.classList.add('loading');
+    // Simulate login
+    setTimeout(() => {
+      submitBtn.classList.remove('loading');
+      // In a real app, redirect to dashboard
+    }, 1500);
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Статистика — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function BarChart({ data, max }) {
+  return React.createElement('div', { style: { display: 'flex', alignItems: 'flex-end', gap: 'clamp(8px, 3vw, 28px)', height: 220, padding: '0 4px' } },
+    data.map((d, i) => React.createElement('div', { key: i, style: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, height: '100%', justifyContent: 'flex-end' } },
+      React.createElement('div', { style: { fontSize: 13, fontWeight: 700, color: 'var(--ink)' } }, d.v),
+      React.createElement('div', { style: { width: '100%', maxWidth: 48, height: (d.v / max * 160) + 'px', background: d.hi ? 'var(--primary)' : 'var(--primary-light)', borderRadius: '8px 8px 0 0', transition: 'height 0.6s ease' } }),
+      React.createElement('div', { style: { fontSize: 12, color: 'var(--muted)', fontWeight: 600 } }, d.l),
+    ))
+  );
+}
+
+function DonutLegend({ items }) {
+  let acc = 0;
+  const total = items.reduce((s, i) => s + i.v, 0);
+  const grad = items.map(it => { const start = acc / total * 360; acc += it.v; const end = acc / total * 360; return it.c + ' ' + start + 'deg ' + end + 'deg'; }).join(', ');
+  return React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap', justifyContent: 'center' } },
+    React.createElement('div', { style: { width: 160, height: 160, borderRadius: '50%', background: 'conic-gradient(' + grad + ')', position: 'relative', flexShrink: 0 } },
+      React.createElement('div', { style: { position: 'absolute', inset: 38, borderRadius: '50%', background: 'var(--surface)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } },
+        React.createElement('div', { style: { fontFamily: 'var(--font-heading)', fontSize: 28, fontWeight: 600, color: 'var(--primary)' } }, total),
+        React.createElement('div', { style: { fontSize: 12, color: 'var(--muted)' } }, 'всего'),
+      )
+    ),
+    React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 12 } },
+      items.map((it, i) => React.createElement('div', { key: i, style: { display: 'flex', alignItems: 'center', gap: 10 } },
+        React.createElement('span', { style: { width: 12, height: 12, borderRadius: 3, background: it.c, flexShrink: 0 } }),
+        React.createElement('span', { style: { fontSize: 14, color: 'var(--ink)' } }, it.l),
+        React.createElement('span', { style: { fontSize: 14, fontWeight: 700, marginLeft: 'auto' } }, it.v),
+      ))
+    )
+  );
+}
+
+function Stats() {
+  const { t } = useLang();
+  const months = [
+    { l: t('Май', 'Мам'), v: 86 }, { l: t('Июн', 'Мау'), v: 102 }, { l: t('Июл', 'Шіл'), v: 94 },
+    { l: t('Авг', 'Там'), v: 118 }, { l: t('Сен', 'Қыр'), v: 131 }, { l: t('Окт', 'Қаз'), v: 142, hi: true },
+  ];
+  return React.createElement(AdminShell, { active: 'stats' },
+    React.createElement('div', { style: { maxWidth: 1100, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Статистика', 'Статистика')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Аналитика по процедурам оценки квалификации', 'Біліктілікті бағалау рәсімдері бойынша аналитика')),
+        ),
+        React.createElement(FormSelect, { value: 'q3', onChange: () => {}, options: [{value:'q3',label:t('III квартал 2026','2026 ж. III тоқсан')},{value:'q2',label:t('II квартал 2026','2026 ж. II тоқсан')},{value:'year',label:t('Весь год','Бүкіл жыл')}] }),
+      ),
+
+      // Metrics
+      React.createElement('div', { style: { display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement(MetricCard, { label: t('Всего тестирований', 'Барлық тестілеу'), value: '673', change: '+24%', icon: Icons.clipboard }),
+        React.createElement(MetricCard, { label: t('Средний балл', 'Орташа балл'), value: '78%', change: '+3%', icon: Icons.barChart }),
+        React.createElement(MetricCard, { label: t('Доля успешных', 'Сәтті үлесі'), value: '64%', change: '+6%', icon: Icons.checkCircle, accent: 'var(--success)' }),
+        React.createElement(MetricCard, { label: t('Выдано сертификатов', 'Берілген сертификат'), value: '431', icon: Icons.star, accent: 'var(--accent)' }),
+      ),
+
+      // Chart grid
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr)', gap: 24, marginBottom: 28 }, className: 'st-grid' },
+        React.createElement(Card, null,
+          React.createElement('h3', { style: { fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 600, marginBottom: 24 } }, t('Тестирований по месяцам', 'Айлар бойынша тестілеу')),
+          React.createElement(BarChart, { data: months, max: 142 }),
+        ),
+        React.createElement(Card, null,
+          React.createElement('h3', { style: { fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 600, marginBottom: 24 } }, t('Распределение итогов', 'Қорытынды бөлінісі')),
+          React.createElement(DonutLegend, { items: [
+            { l: t('Пройдено', 'Өтті'), v: 431, c: 'var(--success)' },
+            { l: t('Не пройдено', 'Өтпеді'), v: 158, c: 'var(--danger)' },
+            { l: t('В процессе', 'Процесте'), v: 84, c: 'var(--accent)' },
+          ] }),
+        ),
+      ),
+
+      // Top tests table
+      React.createElement('h3', { style: { fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 600, marginBottom: 16 } }, t('Популярные процедуры', 'Танымал рәсімдер')),
+      React.createElement(DataTable, {
+        columns: [
+          { key: 'test', label: t('Тест', 'Тест'), render: r => React.createElement('span', { style: { fontWeight: 600 } }, r.test) },
+          { key: 'count', label: t('Прохождений', 'Өту саны') },
+          { key: 'avg', label: t('Средний балл', 'Орташа балл'), render: r => React.createElement('span', { style: { fontWeight: 600, color: r.avg >= 70 ? 'var(--success)' : 'var(--accent)' } }, r.avg + '%') },
+          { key: 'rate', label: t('Успешность', 'Сәттілік'), render: r => React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10, minWidth: 140 } },
+            React.createElement('div', { style: { flex: 1, height: 6, borderRadius: 3, background: 'var(--border)', overflow: 'hidden' } }, React.createElement('div', { style: { height: '100%', width: r.rate + '%', background: 'var(--primary)', borderRadius: 3 } })),
+            React.createElement('span', { style: { fontSize: 13, fontWeight: 600, color: 'var(--muted)', width: 38 } }, r.rate + '%')) },
+        ],
+        rows: [
+          { test: 'Сетевой администратор', count: 142, avg: 76, rate: 68 },
+          { test: 'Системный администратор', count: 98, avg: 81, rate: 74 },
+          { test: 'Специалист по ИБ', count: 87, avg: 72, rate: 61 },
+          { test: 'Инженер по ИВС', count: 64, avg: 84, rate: 79 },
+        ],
+      }),
+      React.createElement('style', null, '@media (max-width: 860px){ .st-grid{ grid-template-columns: 1fr !important; } }'),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(Stats));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

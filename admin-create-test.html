@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Создание теста — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function FieldRow({ children, cols }) {
+  return React.createElement('div', { style: { display: 'grid', gridTemplateColumns: cols || '1fr 1fr', gap: 16 } }, children);
+}
+
+// Radio group for language selection
+function RadioGroup({ label, options, value, onChange }) {
+  return React.createElement('div', { style: { marginBottom: 20 } },
+    React.createElement('label', { style: { display: 'block', fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 10 } }, label),
+    React.createElement('div', { style: { display: 'flex', gap: 12, flexWrap: 'wrap' } },
+      options.map(opt => {
+        const active = value === opt.value;
+        return React.createElement('label', { key: opt.value,
+          style: { display: 'flex', alignItems: 'center', gap: 10, padding: '10px 18px', borderRadius: 10, border: '1.5px solid ' + (active ? 'var(--primary)' : 'var(--border)'), background: active ? 'var(--primary-lighter)' : 'var(--surface)', cursor: 'pointer', fontSize: 15, fontWeight: active ? 600 : 400, transition: 'all 0.15s' },
+          onClick: () => onChange(opt.value) },
+          React.createElement('span', { style: { width: 18, height: 18, borderRadius: '50%', border: '2px solid ' + (active ? 'var(--primary)' : 'var(--border)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 } },
+            active && React.createElement('span', { style: { width: 9, height: 9, borderRadius: '50%', background: 'var(--primary)' } })
+          ),
+          opt.label,
+        );
+      })
+    )
+  );
+}
+
+function CreateTest() {
+  const { t } = useLang();
+  const [name, setName] = React.useState('');
+  const [profession, setProfession] = React.useState('');
+  const [ork, setOrk] = React.useState('');
+  const [langTest, setLangTest] = React.useState('ru');
+  const [theoryOn, setTheoryOn] = React.useState(true);
+  const [passingScore, setPassingScore] = React.useState('70');
+
+  const professions = [
+    { value: 'ivs', label: t('Инженер по ИВС', 'ИВЖ инженері') },
+    { value: 'dba', label: t('Администратор БД', 'ДҚ әкімшісі') },
+    { value: 'sysadmin', label: t('Системный администратор', 'Жүйелік әкімші') },
+    { value: 'netadmin', label: t('Сетевой администратор', 'Желілік әкімші') },
+    { value: 'ib', label: t('Специалист по ИБ', 'АҚ маманы') },
+  ];
+
+  return React.createElement(AdminShell, { active: 'tests' },
+    React.createElement('div', { style: { maxWidth: 820, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement(Breadcrumb, { items: [t('Банк тестов', 'Тест банкі'), t('Новый тест', 'Жаңа тест')] }),
+      React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Создание теста', 'Тест жасау')),
+      React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)', marginBottom: 28 } }, t('Настройте параметры процедуры оценки квалификации', 'Біліктілікті бағалау рәсімінің параметрлерін реттеңіз')),
+
+      // Block 1: Basics
+      React.createElement(Card, { style: { marginBottom: 20 } },
+        React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 600, marginBottom: 20 } }, t('Основное', 'Негізгі')),
+
+        // Профессия + кнопка добавления
+        React.createElement('div', { style: { marginBottom: 20 } },
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 } },
+            React.createElement('label', { style: { fontSize: 14, fontWeight: 600, color: 'var(--ink)' } },
+              t('Профессия', 'Кәсіп'),
+              React.createElement('span', { style: { color: 'var(--danger)', marginLeft: 3 } }, '*'),
+            ),
+            React.createElement('button', {
+              style: { display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', fontSize: 13, fontWeight: 600, padding: 0 },
+              onClick: () => {}
+            }, Icons.plus, t('Добавить профессию', 'Кәсіп қосу')),
+          ),
+          React.createElement(FormSelect, { value: profession, onChange: setProfession, placeholder: t('Выберите профессию', 'Кәсіпті таңдаңыз'), options: professions }),
+        ),
+
+        // Уровень ОРК
+        React.createElement(FormSelect, {
+          label: React.createElement('span', null, t('Уровень ОРК', 'ҰБС деңгейі'), React.createElement('span', { style: { color: 'var(--danger)', marginLeft: 3 } }, '*')),
+          value: ork, onChange: setOrk,
+          placeholder: t('Выберите уровень', 'Деңгейді таңдаңыз'),
+          options: [{ value: '4', label: '4' }, { value: '5', label: '5' }, { value: '6', label: '6' }],
+        }),
+
+        // Название теста
+        React.createElement(FormInput, { label: t('Название теста', 'Тест атауы'), placeholder: t('Например: Системный администратор уровень 5', 'Мысалы: Жүйелік әкімші деңгей 5'), value: name, onChange: setName }),
+
+        // Язык теста
+        React.createElement(RadioGroup, {
+          label: t('Язык теста', 'Тест тілі'),
+          value: langTest, onChange: setLangTest,
+          options: [{ value: 'ru', label: 'Русский' }, { value: 'kz', label: 'Қазақша' }],
+        }),
+
+        React.createElement(FormTextarea, { label: t('Описание', 'Сипаттама'), placeholder: t('Краткое описание процедуры и требований…', 'Рәсім мен талаптардың қысқаша сипаттамасы…'), rows: 3 }),
+      ),
+
+      // Block 2: Theory
+      React.createElement(Card, { style: { marginBottom: 28 } },
+        React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: theoryOn ? 20 : 0 } },
+          React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 600, whiteSpace: 'nowrap' } }, t('Тест', 'Тест')),
+          React.createElement(Toggle, { checked: theoryOn, onChange: setTheoryOn }),
+        ),
+        theoryOn && React.createElement(FieldRow, { cols: 'repeat(auto-fit, minmax(180px, 1fr))' },
+          React.createElement(FormInput, { label: t('Кол-во вопросов', 'Сұрақ саны'), type: 'number', placeholder: '40', value: '40' }),
+          React.createElement(FormInput, { label: t('Время (мин)', 'Уақыт (мин)'), type: 'number', placeholder: '60', value: '60' }),
+          React.createElement('div', { style: { position: 'relative' } },
+            React.createElement(FormInput, {
+              label: t('Проходной балл', 'Өту балы'),
+              type: 'number',
+              placeholder: '70',
+              value: passingScore,
+              onChange: v => { const n = Math.min(100, Math.max(1, Number(v))); setPassingScore(String(n)); },
+            }),
+            React.createElement('span', { style: { position: 'absolute', right: 14, top: 38, fontSize: 14, fontWeight: 600, color: 'var(--muted)', pointerEvents: 'none' } }, '%'),
+          ),
+        ),
+      ),
+
+
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' } },
+        React.createElement(Btn, { variant: 'ghost', onClick: () => window.location.href = 'admin-dashboard.html' }, t('Отмена', 'Болдырмау')),
+        React.createElement('div', { style: { display: 'flex', gap: 12 } },
+          React.createElement(Btn, { variant: 'secondary', icon: Icons.save }, t('Сохранить черновик', 'Жобаны сақтау')),
+          React.createElement(Btn, { iconRight: Icons.arrowRight, onClick: () => window.location.href = 'admin-question-editor.html' }, t('Далее: вопросы', 'Келесі: сұрақтар')),
+        ),
+      ),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(CreateTest));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчёт по апелляции — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --doc-ink: #111111;
+    --doc-muted: #555555;
+    --doc-line: #222222;
+    --doc-faint: #d9d6cf;
+    --accent: #0F766E;
+    --success: #167A3C;
+    --danger: #B3261E;
+    --font-heading: 'Lora', 'PT Serif', Georgia, serif;
+    --font-body: 'Manrope', 'PT Sans', system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--doc-ink);
+    background: #6b6b6b;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Screen-only toolbar ───────────────────────── */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    background: #1f1f1f;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    flex-wrap: wrap;
+  }
+  .toolbar-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn svg { width: 17px; height: 17px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #0C5F58; }
+  .btn-ghost { background: transparent; color: #d8d8d8; border: 1px solid #4a4a4a; }
+  .btn-ghost:hover { background: #2c2c2c; color: #fff; }
+
+  /* ── Document sheet ────────────────────────────── */
+  .sheet-wrap { padding: 28px 16px 60px; display: flex; justify-content: center; }
+  .sheet {
+    width: 210mm;
+    max-width: 100%;
+    min-height: 297mm;
+    background: #fff;
+    padding: 22mm 20mm 20mm;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.35);
+  }
+
+  /* ── Letterhead ────────────────────────────────── */
+  .letterhead {
+    text-align: center;
+    border-bottom: 2px solid var(--doc-line);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .letterhead .org-kz { font-size: 12.5px; font-weight: 600; color: var(--doc-ink); }
+  .letterhead .org-ru { font-size: 12.5px; color: var(--doc-muted); margin-top: 2px; }
+  .letterhead .brand {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    margin: 8px 0 2px;
+  }
+
+  /* ── Document title ────────────────────────────── */
+  .doc-title { text-align: center; margin-bottom: 18px; }
+  .doc-title h1 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ── Candidate info card ───────────────────────── */
+  .info {
+    border: 1px solid var(--doc-line);
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+  }
+  .info .cand-name {
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 24px;
+  }
+  .info-item { display: flex; flex-direction: column; gap: 1px; }
+  .info-item .lbl {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--doc-muted);
+  }
+  .info-item .val { font-size: 13.5px; font-weight: 500; }
+
+  /* ── Questions table ───────────────────────────── */
+  .section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--doc-muted);
+    margin: 0 0 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--doc-faint);
+  }
+  table.qa {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+    font-size: 12px;
+  }
+  table.qa th,
+  table.qa td {
+    border: 1px solid var(--doc-line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.qa th {
+    background: #f3f1ec;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  table.qa td.center { text-align: center; vertical-align: middle; }
+  table.qa .qtext { line-height: 1.45; }
+  table.qa tr.wrong td { background: #fcf0ef; }
+  table.qa tr.wrong:nth-child(even) td { background: #fcf0ef; }
+  table.qa tbody tr:nth-child(even) td { background: #fafaf8; }
+
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+  }
+  .mark svg { width: 13px; height: 13px; }
+  .mark.ok { color: var(--success); }
+  .mark.no { color: var(--danger); }
+  .ans-wrong { color: var(--danger); font-weight: 600; }
+  .ans-right { color: var(--success); font-weight: 600; }
+
+  /* ── Total row ─────────────────────────────────── */
+  .total-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid var(--doc-line);
+    border-top: none;
+    padding: 14px 18px;
+    background: #f3f1ec;
+    flex-wrap: wrap;
+  }
+  .total-bar .label { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--doc-muted); }
+  .total-bar .score {
+    font-family: var(--font-heading);
+    font-size: 21px;
+    font-weight: 700;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .total-bar .score .pct { color: var(--success); }
+  .total-bar .verdict {
+    padding: 4px 14px;
+    border: 1.5px solid var(--success);
+    color: var(--success);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .doc-footer {
+    margin-top: 30px;
+    padding-top: 12px;
+    border-top: 1px solid var(--doc-faint);
+    font-size: 11px;
+    color: var(--doc-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .doc-footer .sign-inline { display: flex; align-items: flex-end; gap: 10px; }
+  .doc-footer .sign-inline .rule { width: 160px; border-bottom: 1px solid var(--doc-line); height: 16px; }
+
+  /* ── Print rules ───────────────────────────────── */
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: #fff; }
+    .toolbar { display: none !important; }
+    .sheet-wrap { padding: 0; }
+    .sheet { width: auto; min-height: auto; box-shadow: none; padding: 0; }
+    table.qa th, .total-bar, .info { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    table.qa tr.wrong td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    table.qa tr { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 760px) {
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .sheet { padding: 18px 16px; }
+    table.qa { font-size: 11px; }
+    table.qa th, table.qa td { padding: 6px 7px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Toolbar (screen only) ───────────────────────── -->
+<div class="toolbar">
+  <span class="toolbar-title">Отчёт по апелляции</span>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" onclick="window.location.href='admin-journal.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Назад
+    </button>
+    <button class="btn btn-ghost" onclick="window.location.href='index.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Все экраны
+    </button>
+    <button class="btn btn-ghost" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Скачать PDF
+    </button>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Печать
+    </button>
+  </div>
+</div>
+
+<!-- ── Document ────────────────────────────────────── -->
+<div class="sheet-wrap">
+  <div class="sheet">
+
+    <!-- Letterhead -->
+    <div class="letterhead">
+      <div class="org-kz">«СӘТТІ» ІТ мамандарды сертификаттау орталығы» ЖШС</div>
+      <div class="org-ru">ТОО «Центр сертификации ІТ-специалистов «СӘТТІ»»</div>
+      <div class="brand">СӘТТІ</div>
+    </div>
+
+    <!-- Title -->
+    <div class="doc-title">
+      <h1>Отчёт по апелляции</h1>
+    </div>
+
+    <!-- Candidate info -->
+    <div class="info">
+      <div class="cand-name">Ержанова Дана Сериковна</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="lbl">Дата теста</span>
+          <span class="val">13 июня 2026 г.</span>
+        </div>
+        <div class="info-item">
+          <span class="lbl">Профессия</span>
+          <span class="val">Системный администратор</span>
+        </div>
+        <div class="info-item">
+          <span class="lbl">Уровень ОРК</span>
+          <span class="val">4</span>
+        </div>
+        <div class="info-item">
+          <span class="lbl">Сессия</span>
+          <span class="val">Сессия 1</span>
+        </div>
+        <div class="info-item">
+          <span class="lbl">Язык теста</span>
+          <span class="val">Русский</span>
+        </div>
+        <div class="info-item">
+          <span class="lbl">№ апелляции</span>
+          <span class="val">АП-2026-014</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions table -->
+    <div class="section-label">Детализация ответов</div>
+    <table class="qa">
+      <thead>
+        <tr>
+          <th style="width:32px">№</th>
+          <th>Текст вопроса</th>
+          <th style="width:20%">Правильный ответ</th>
+          <th style="width:20%">Ответ кандидата</th>
+          <th style="width:70px">Верно</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+
+    <!-- Total -->
+    <div class="total-bar">
+      <span class="label">Итог</span>
+      <span class="score">Набрано <span id="got"></span> из <span id="max"></span> баллов <span class="pct" id="pct"></span></span>
+      <span class="verdict" id="verdict"></span>
+    </div>
+
+    <div class="doc-footer">
+      <span>Документ сформирован в системе оценки квалификации «СӘТТІ» · 13.06.2026</span>
+      <span class="sign-inline">Член апелляционной комиссии: <span class="rule"></span></span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var questions = [
+    {
+      q: 'Какой уровень модели OSI отвечает за маршрутизацию пакетов?',
+      correct: 'Сетевой (L3)',
+      answer: 'Сетевой (L3)',
+      ok: true
+    },
+    {
+      q: 'Какая команда в Linux выводит таблицу маршрутизации ядра?',
+      correct: 'ip route',
+      answer: 'ifconfig -a',
+      ok: false
+    },
+    {
+      q: 'Что обозначает маска подсети /26 в нотации CIDR?',
+      correct: '255.255.255.192',
+      answer: '255.255.255.192',
+      ok: true
+    },
+    {
+      q: 'Какой протокол используется для автоматической выдачи IP-адресов в сети?',
+      correct: 'DHCP',
+      answer: 'DNS',
+      ok: false
+    },
+    {
+      q: 'Какой порт по умолчанию использует протокол SSH?',
+      correct: '22',
+      answer: '22',
+      ok: true
+    },
+    {
+      q: 'Что делает команда chmod 755 для файла?',
+      correct: 'rwx для владельца, r-x для группы и остальных',
+      answer: 'rwx для всех пользователей',
+      ok: false
+    },
+    {
+      q: 'Какой тип RAID обеспечивает зеркалирование данных?',
+      correct: 'RAID 1',
+      answer: 'RAID 1',
+      ok: true
+    },
+    {
+      q: 'Какая утилита проверяет доступность узла по протоколу ICMP?',
+      correct: 'ping',
+      answer: 'ping',
+      ok: true
+    },
+    {
+      q: 'Что хранится в файле /etc/fstab?',
+      correct: 'Таблица монтируемых файловых систем',
+      answer: 'Список пользователей системы',
+      ok: false
+    },
+    {
+      q: 'Какой механизм Windows Server централизованно управляет политиками безопасности?',
+      correct: 'Group Policy (GPO)',
+      answer: 'Group Policy (GPO)',
+      ok: true
+    }
+  ];
+
+  var iconOk = '<span class="mark ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
+  var iconNo = '<span class="mark no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>';
+
+  var html = '';
+  var got = 0;
+  questions.forEach(function(item, i) {
+    if (item.ok) got++;
+    html +=
+      '<tr class="' + (item.ok ? '' : 'wrong') + '">' +
+        '<td class="center">' + (i + 1) + '</td>' +
+        '<td class="qtext">' + item.q + '</td>' +
+        '<td class="ans-right">' + item.correct + '</td>' +
+        '<td class="' + (item.ok ? 'ans-right' : 'ans-wrong') + '">' + item.answer + '</td>' +
+        '<td class="center">' + (item.ok ? iconOk : iconNo) + '</td>' +
+      '</tr>';
+  });
+  document.getElementById('rows').innerHTML = html;
+
+  var max = questions.length;
+  var pct = Math.round(got / max * 100);
+  document.getElementById('got').textContent = got;
+  document.getElementById('max').textContent = max;
+  document.getElementById('pct').textContent = '(' + pct + '%)';
+
+  var passed = pct >= 70;
+  var verdict = document.getElementById('verdict');
+  verdict.textContent = passed ? 'Порог пройден' : 'Порог не пройден';
+  if (!passed) {
+    verdict.style.borderColor = 'var(--danger)';
+    verdict.style.color = 'var(--danger)';
+    document.getElementById('pct').style.color = 'var(--danger)';
+  }
+</script>
+
+</body>
+</html>

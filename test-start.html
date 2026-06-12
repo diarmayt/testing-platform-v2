@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Старт теста — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function RuleRow({ icon, title, text }) {
+  return React.createElement('div', { style: { display: 'flex', gap: 14, alignItems: 'flex-start' } },
+    React.createElement('div', { style: { width: 40, height: 40, borderRadius: 10, background: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 } }, icon),
+    React.createElement('div', null,
+      React.createElement('div', { style: { fontWeight: 600, fontSize: 15, marginBottom: 2 } }, title),
+      React.createElement('div', { style: { fontSize: 14, color: 'var(--muted)', lineHeight: 1.45 } }, text),
+    )
+  );
+}
+
+function TestStart() {
+  const { t } = useLang();
+  const [agreed, setAgreed] = React.useState(false);
+
+  return React.createElement('div', { style: { minHeight: '100dvh', display: 'flex', flexDirection: 'column' } },
+    React.createElement(SattiHeader, { variant: 'candidate', avatarInitials: 'АК' }),
+    React.createElement('main', { style: { flex: 1 } },
+      React.createElement('div', { style: { maxWidth: 720, margin: '0 auto', padding: '32px 24px' } },
+        React.createElement(Breadcrumb, { items: [t('Кабинет', 'Кабинет'), t('Сетевой администратор', 'Сетевой администратор'), t('Старт теста', 'Тест старты')] }),
+        React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Тестирование', 'Тестілеу')),
+        React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)', marginBottom: 28 } }, 'Сетевой администратор'),
+
+        // Params card
+        React.createElement(Card, { padding: 0, style: { marginBottom: 24, overflow: 'hidden' } },
+          React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' } },
+            [
+              { icon: Icons.list, val: '40', label: t('вопросов', 'сұрақ') },
+              { icon: Icons.clock, val: '60', label: t('минут', 'минут') },
+              { icon: Icons.checkCircle, val: '70%', label: t('проходной балл', 'өту балы') },
+            ].map((m, i) => React.createElement('div', { key: i, style: { padding: '24px 16px', textAlign: 'center', borderRight: i < 2 ? '1px solid var(--border)' : 'none' } },
+              React.createElement('div', { style: { color: 'var(--primary)', display: 'flex', justifyContent: 'center', marginBottom: 8 } }, m.icon),
+              React.createElement('div', { style: { fontFamily: 'var(--font-heading)', fontSize: 28, fontWeight: 600, lineHeight: 1 } }, m.val),
+              React.createElement('div', { style: { fontSize: 13, color: 'var(--muted)', marginTop: 4 } }, m.label),
+            ))
+          )
+        ),
+
+        // Rules
+        React.createElement(Card, { style: { marginBottom: 24 } },
+          React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 600, marginBottom: 20 } }, t('Правила прохождения', 'Өту ережелері')),
+          React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 18 } },
+            React.createElement(RuleRow, { icon: Icons.clock, title: t('Таймер запускается сразу', 'Таймер бірден іске қосылады'), text: t('После старта остановить тест нельзя. По истечении времени ответы отправятся автоматически.', 'Бастағаннан кейін тестті тоқтату мүмкін емес. Уақыт біткенде жауаптар автоматты түрде жіберіледі.') }),
+            React.createElement(RuleRow, { icon: Icons.list, title: t('Навигация по вопросам', 'Сұрақтар бойынша навигация'), text: t('Можно возвращаться к вопросам и менять ответы до завершения теста.', 'Тест аяқталғанға дейін сұрақтарға оралып, жауаптарды өзгертуге болады.') }),
+          )
+        ),
+
+        // Agreement + start
+        React.createElement(Card, { padding: 20, style: { marginBottom: 24, background: 'var(--primary-lighter)', boxShadow: 'none', border: '1px solid var(--border)' } },
+          React.createElement(Checkbox, { checked: agreed, onChange: setAgreed },
+            React.createElement('span', { style: { fontSize: 15 } }, t('Я ознакомился с правилами и готов начать тестирование.', 'Мен ережелермен таныстым және тестілеуді бастауға дайынмын.'))
+          )
+        ),
+
+        React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap' } },
+          React.createElement(Btn, { variant: 'secondary', icon: Icons.arrowLeft, onClick: () => window.location.href = 'candidate-cabinet.html' }, t('Назад', 'Артқа')),
+          React.createElement(Btn, { size: 'lg', disabled: !agreed, iconRight: Icons.play, onClick: () => window.location.href = 'test-taking.html' }, t('Начать тест', 'Тестті бастау')),
+        ),
+      )
+    ),
+    React.createElement(SattiFooter, null),
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(TestStart));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

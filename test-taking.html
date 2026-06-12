@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Прохождение теста — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+// ── Countdown timer pill ──────────────────────────
+function TimerPill({ secondsLeft, large }) {
+  const { t } = useLang();
+  const mm = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+  const ss = String(secondsLeft % 60).padStart(2, '0');
+  const low = secondsLeft <= 300;
+  return React.createElement('div', {
+    style: {
+      display: 'inline-flex', alignItems: 'center', gap: large ? 12 : 8,
+      padding: large ? '12px 22px' : '8px 16px', borderRadius: 12,
+      background: low ? 'var(--danger-light)' : 'var(--primary-light)',
+      color: low ? 'var(--danger)' : 'var(--primary)',
+      fontWeight: 700, fontSize: large ? 26 : 16, fontVariantNumeric: 'tabular-nums', lineHeight: 1,
+    }
+  },
+    Icons.clock,
+    large && React.createElement('span', { style: { fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', opacity: 0.8 } }, t('Осталось', 'Қалды')),
+    React.createElement('span', null, mm + ':' + ss),
+  );
+}
+
+// ── Final screen ──────────────────────────────────
+function FinishedScreen() {
+  const { t } = useLang();
+  return React.createElement('div', { style: { minHeight: '100dvh', display: 'flex', flexDirection: 'column' } },
+    React.createElement(SattiHeader, { variant: 'simple' }),
+    React.createElement('main', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 24px' } },
+      React.createElement('div', { style: { textAlign: 'center', maxWidth: 440 } },
+        React.createElement('div', { style: { width: 88, height: 88, borderRadius: '50%', background: 'var(--success-light)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px' } },
+          React.createElement('svg', { width: 44, height: 44, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }, React.createElement('path', { d: 'M22 11.08V12a10 10 0 1 1-5.93-9.14' }), React.createElement('polyline', { points: '22 4 12 14.01 9 11.01' })),
+        ),
+        React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, lineHeight: 1.25, marginBottom: 12 } }, t('Тест завершён', 'Тест аяқталды')),
+        React.createElement('p', { style: { fontSize: 18, color: 'var(--muted)', lineHeight: 1.5 } }, t('Ожидайте результатов.', 'Нәтижелерді күтіңіз.')),
+      )
+    ),
+    React.createElement(SattiFooter, null),
+  );
+}
+
+// ── Reminder modal ────────────────────────────────
+function ReminderModal({ onClose }) {
+  const { t } = useLang();
+  return React.createElement('div', {
+    onClick: onClose,
+    style: { position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(22,48,46,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, animation: 'overlayIn 0.2s ease' }
+  },
+    React.createElement('div', {
+      onClick: e => e.stopPropagation(),
+      style: { background: 'var(--surface)', borderRadius: 16, boxShadow: 'var(--shadow-hover)', padding: '36px 32px', maxWidth: 420, width: '100%', textAlign: 'center', animation: 'modalIn 0.25s cubic-bezier(0.16,1,0.3,1)' }
+    },
+      React.createElement('div', { style: { width: 64, height: 64, borderRadius: '50%', background: 'var(--danger-light)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' } },
+        React.createElement('svg', { width: 32, height: 32, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }, React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('polyline', { points: '12 6 12 12 16 14' })),
+      ),
+      React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 24, fontWeight: 600, marginBottom: 10 } }, t('Осталось 5 минут', '5 минут қалды')),
+      React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)', lineHeight: 1.5, marginBottom: 28 } }, t('Успейте ответить на все вопросы.', 'Барлық сұрақтарға жауап беріп үлгеріңіз.')),
+      React.createElement(Btn, { fullWidth: true, onClick: onClose }, t('Понятно', 'Түсінікті')),
+    )
+  );
+}
+
+function TestTaking() {
+  const { t } = useLang();
+  const total = 40;
+  const [current, setCurrent] = React.useState(12);
+  const [answers, setAnswers] = React.useState({ 1:'b',2:'a',3:'c',4:'a',5:'d',6:'b',7:'a',8:'c',9:'b',10:'a',11:'d' });
+  const [selected, setSelected] = React.useState(null);
+  const [secondsLeft, setSecondsLeft] = React.useState(34 * 60 + 12);
+
+  // demo state: 'test' | 'modal' | 'finished'
+  const [demo, setDemo] = React.useState('test');
+
+  React.useEffect(() => {
+    const id = setInterval(() => setSecondsLeft(s => s > 0 ? s - 1 : 0), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const answeredCount = Object.keys(answers).length;
+
+  const options = [
+    { id: 'a', text: t('HashMap не синхронизирован и допускает один null-ключ', 'HashMap синхрондалмаған және бір null-кілтке рұқсат береді') },
+    { id: 'b', text: t('Hashtable работает быстрее за счёт отсутствия блокировок', 'Hashtable құлыптардың болмауынан жылдамырақ жұмыс істейді') },
+    { id: 'c', text: t('Hashtable синхронизирован и не допускает null-ключей и значений', 'Hashtable синхрондалған және null-кілттер мен мәндерге рұқсат бермейді') },
+    { id: 'd', text: t('Оба класса полностью потокобезопасны по умолчанию', 'Екі класс та әдепкі бойынша толық ағынға қауіпсіз') },
+  ];
+
+  const QuestionNav = () => React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 8 } },
+    Array.from({ length: total }, (_, i) => i + 1).map(n => {
+      const isAnswered = answers[n] || (n === current && selected);
+      const isCurrent = n === current;
+      return React.createElement('button', { key: n,
+        onClick: () => { if (selected) setAnswers(a => ({...a, [current]: selected})); setCurrent(n); setSelected(answers[n] || null); },
+        style: { aspectRatio: '1', borderRadius: 8, border: isCurrent ? '2px solid var(--primary)' : '1px solid var(--border)',
+          background: isCurrent ? 'var(--primary)' : isAnswered ? 'var(--success-light)' : 'var(--surface)',
+          color: isCurrent ? '#fff' : isAnswered ? 'var(--success)' : 'var(--muted)',
+          fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' } }, n);
+    })
+  );
+
+  // Demo state switcher (floating)
+  const DemoSwitcher = () => {
+    const tabs = [
+      { id: 'test', label: t('Тест', 'Тест') },
+      { id: 'modal', label: t('Напоминание', 'Еске салу') },
+      { id: 'finished', label: t('Завершено', 'Аяқталды') },
+    ];
+    return React.createElement('div', { style: { position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 1100, display: 'flex', alignItems: 'center', gap: 4, padding: 6, borderRadius: 999, background: 'var(--ink)', boxShadow: '0 8px 32px rgba(22,48,46,0.28)' } },
+      React.createElement('span', { style: { fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', padding: '0 8px 0 10px' } }, t('Состояния', 'Күйлер')),
+      tabs.map(tab => React.createElement('button', { key: tab.id, onClick: () => setDemo(tab.id),
+        style: { padding: '8px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600,
+          background: demo === tab.id ? '#fff' : 'transparent', color: demo === tab.id ? 'var(--ink)' : 'rgba(255,255,255,0.75)', transition: 'all 0.15s' } }, tab.label)),
+    );
+  };
+
+  // Final screen as a separate example state
+  if (demo === 'finished') {
+    return React.createElement(React.Fragment, null,
+      React.createElement(FinishedScreen),
+      React.createElement(DemoSwitcher),
+    );
+  }
+
+  return React.createElement('div', { style: { minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' } },
+    // Test header — logo + test name + prominent countdown timer (no proctoring)
+    React.createElement('header', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface)', position: 'sticky', top: 0, zIndex: 100, flexWrap: 'wrap', gap: 12 } },
+      React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 } },
+        React.createElement('a', { href: 'index.html', style: { fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 700, color: 'var(--primary)', textDecoration: 'none', cursor: 'pointer' } }, 'СӘТТІ'),
+        React.createElement('a', { href: 'index.html', style: { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, fontWeight: 600, color: 'var(--muted)', textDecoration: 'none', whiteSpace: 'nowrap', transition: 'border-color .15s, color .15s' }, onMouseEnter: e => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.color = 'var(--primary)'; }, onMouseLeave: e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--muted)'; } },
+          React.createElement('svg', { width: 12, height: 12, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' },
+            React.createElement('rect', { x: 3, y: 3, width: 7, height: 7, rx: 1 }),
+            React.createElement('rect', { x: 14, y: 3, width: 7, height: 7, rx: 1 }),
+            React.createElement('rect', { x: 3, y: 14, width: 7, height: 7, rx: 1 }),
+            React.createElement('rect', { x: 14, y: 14, width: 7, height: 7, rx: 1 }),
+          ),
+          'Все экраны',
+        ),
+        React.createElement('span', { style: { fontSize: 14, color: 'var(--muted)', borderLeft: '1px solid var(--border)', paddingLeft: 16 } }, 'Сетевой администратор · ' + t('Тест', 'Тест')),
+      ),
+      React.createElement(TimerPill, { secondsLeft, large: true }),
+    ),
+
+    React.createElement('main', { style: { flex: 1 } },
+      React.createElement('div', { style: { maxWidth: 1100, margin: '0 auto', padding: '28px 24px', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 24, alignItems: 'start' } },
+
+        // Question column
+        React.createElement('div', null,
+          // progress
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
+            React.createElement('span', { style: { fontSize: 14, fontWeight: 600, color: 'var(--muted)' } }, t('Вопрос', 'Сұрақ') + ' ' + current + ' / ' + total),
+            React.createElement('span', { style: { fontSize: 14, color: 'var(--muted)' } }, t('Отвечено: ', 'Жауап берілді: ') + answeredCount),
+          ),
+          React.createElement('div', { style: { height: 6, borderRadius: 3, background: 'var(--border)', marginBottom: 24, overflow: 'hidden' } },
+            React.createElement('div', { style: { height: '100%', width: (current / total * 100) + '%', background: 'var(--primary)', borderRadius: 3, transition: 'width 0.3s' } })
+          ),
+
+          React.createElement(Card, { padding: 28 },
+            React.createElement('div', { style: { fontSize: 12, fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 } }, t('Множественный выбор · 1 балл', 'Көп таңдау · 1 балл')),
+            React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--question)', fontWeight: 600, lineHeight: 1.4, marginBottom: 24 } },
+              t('В чём ключевое различие между HashMap и Hashtable в Java?', 'Java-дағы HashMap пен Hashtable арасындағы негізгі айырмашылық неде?')),
+
+            React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 12 } },
+              options.map(opt => {
+                const isSel = selected === opt.id;
+                return React.createElement('label', { key: opt.id,
+                  onClick: () => setSelected(opt.id),
+                  style: { display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', borderRadius: 12,
+                    border: '1.5px solid ' + (isSel ? 'var(--primary)' : 'var(--border)'),
+                    background: isSel ? 'var(--primary-lighter)' : 'var(--surface)', cursor: 'pointer', transition: 'all 0.15s' } },
+                  React.createElement('div', { style: { width: 22, height: 22, borderRadius: '50%', border: '2px solid ' + (isSel ? 'var(--primary)' : 'var(--border)'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 } },
+                    isSel && React.createElement('div', { style: { width: 11, height: 11, borderRadius: '50%', background: 'var(--primary)' } })),
+                  React.createElement('span', { style: { fontSize: 15, lineHeight: 1.45 } },
+                    React.createElement('strong', { style: { marginRight: 6, textTransform: 'uppercase' } }, opt.id), opt.text),
+                );
+              })
+            ),
+          ),
+
+          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginTop: 24, flexWrap: 'wrap' } },
+            React.createElement(Btn, { variant: 'secondary', icon: Icons.arrowLeft, disabled: current === 1, onClick: () => { setCurrent(c => Math.max(1, c-1)); setSelected(answers[current-1] || null); } }, t('Назад', 'Артқа')),
+            React.createElement('div', { style: { display: 'flex', gap: 12 } },
+              React.createElement(Btn, { variant: 'ghost' }, t('Пропустить', 'Өткізіп жіберу')),
+              React.createElement(Btn, { iconRight: Icons.arrowRight, onClick: () => { if (selected) setAnswers(a => ({...a, [current]: selected})); setCurrent(c => Math.min(total, c+1)); setSelected(answers[current+1] || null); } }, t('Далее', 'Келесі')),
+            )
+          ),
+        ),
+
+        // Sidebar nav
+        React.createElement('div', { style: { position: 'sticky', top: 88 } },
+          React.createElement(Card, { padding: 20 },
+            React.createElement('div', { style: { fontSize: 14, fontWeight: 600, marginBottom: 14 } }, t('Навигация по вопросам', 'Сұрақтар навигациясы')),
+            React.createElement(QuestionNav),
+            React.createElement('div', { style: { display: 'flex', gap: 16, marginTop: 16, fontSize: 12, color: 'var(--muted)' } },
+              React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: 6 } }, React.createElement('span', { style: { width: 12, height: 12, borderRadius: 3, background: 'var(--success-light)', border: '1px solid var(--success)' } }), t('Отвечено', 'Жауап берілген')),
+              React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: 6 } }, React.createElement('span', { style: { width: 12, height: 12, borderRadius: 3, border: '1px solid var(--border)' } }), t('Пусто', 'Бос')),
+            ),
+            React.createElement('div', { style: { borderTop: '1px solid var(--border)', marginTop: 18, paddingTop: 18 } },
+              React.createElement(Btn, { variant: 'primary', fullWidth: true, iconRight: Icons.check, onClick: () => setDemo('finished') }, t('Завершить тест', 'Тестті аяқтау')),
+              React.createElement('p', { style: { fontSize: 12, color: 'var(--muted)', textAlign: 'center', marginTop: 10, lineHeight: 1.4 } }, t('После завершения изменить ответы нельзя', 'Аяқтағаннан кейін жауаптарды өзгерту мүмкін емес')),
+            ),
+          ),
+        ),
+      )
+    ),
+
+    demo === 'modal' && React.createElement(ReminderModal, { onClose: () => setDemo('test') }),
+    React.createElement(DemoSwitcher),
+    React.createElement('style', null, '@keyframes overlayIn { from{opacity:0} to{opacity:1} } @keyframes modalIn { from{opacity:0; transform:translateY(16px) scale(0.97)} to{opacity:1; transform:none} } @media (max-width: 820px){ main > div { grid-template-columns: 1fr !important; } }'),
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(TestTaking));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

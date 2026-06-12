@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кандидаты — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function SearchBar({ placeholder, value, onChange }) {
+  return React.createElement('div', { style: { position: 'relative', flex: '1 1 260px', minWidth: 200 } },
+    React.createElement('span', { style: { position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', display: 'flex' } }, Icons.search),
+    React.createElement('input', { placeholder, value, onChange: e => onChange && onChange(e.target.value),
+      style: { width: '100%', height: 44, padding: '0 16px 0 44px', fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--ink)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none' },
+      onFocus: e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(15,118,110,0.1)'; },
+      onBlur: e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; },
+    })
+  );
+}
+
+// Combobox — datalist-based: shows preset options + allows free text input
+function SessionCombobox({ value, onChange, listId }) {
+  const { t } = useLang();
+  const presets = [t('Сессия 1','1-сессия'), t('Сессия 2','2-сессия'), t('Сессия 3','3-сессия'), t('Утренняя группа','Таңғы топ'), t('Вечерняя группа','Кешкі топ')];
+  const inputSt = { width: 148, height: 34, padding: '0 10px', fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' };
+  return React.createElement('div', { onClick: e => e.stopPropagation() },
+    React.createElement('input', { list: listId, value, placeholder: t('— выбрать —','— таңдау —'), onChange: e => onChange(e.target.value), style: inputSt,
+      onFocus: e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(15,118,110,0.1)'; },
+      onBlur: e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; },
+    }),
+    React.createElement('datalist', { id: listId }, presets.map(p => React.createElement('option', { key: p, value: p }))),
+  );
+}
+
+// Language pill
+function LangPill({ lang }) {
+  const ru = lang === 'ru';
+  return React.createElement('span', { style: { display: 'inline-flex', padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', background: ru ? 'rgba(94,110,107,0.1)' : 'var(--primary-light)', color: ru ? 'var(--muted)' : 'var(--primary)' } }, ru ? 'Рус' : 'Қаз');
+}
+
+function Candidates() {
+  const { t } = useLang();
+  const [q, setQ] = React.useState('');
+  const [page, setPage] = React.useState(1);
+  const [sessions, setSessions] = React.useState({});
+
+  const rowsBase = [
+    { ini: 'АН', name: t('Ахметов Нурлан', 'Ахметов Нұрлан'), email: 'n.akhmetov@example.kz', test: 'Сетевой администратор', st: 'active', stage: t('ТЕОРИЯ', 'ТЕОРИЯ'), date: t('14 окт 2026', '14 қаз 2026'), lang: 'ru' },
+    { ini: 'СК', name: t('Смагулова Камила', 'Смағұлова Камила'), email: 'k.smagulova@example.kz', test: 'Специалист по ИБ', st: 'passed', stage: t('ПРОЙДЕНО', 'ӨТТІ'), date: t('14 окт 2026', '14 қаз 2026'), lang: 'kz' },
+    { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@example.kz', test: 'Системный администратор', st: 'passed', stage: t('ПРОЙДЕНО', 'ӨТТІ'), date: t('13 окт 2026', '13 қаз 2026'), lang: 'ru' },
+    { ini: 'БМ', name: t('Бекжанов Мурат', 'Бекжанов Мұрат'), email: 'm.bekzhanov@example.kz', test: 'Администратор БД', st: 'failed', stage: t('НЕ ПРОЙДЕНО', 'ӨТПЕДІ'), date: t('12 окт 2026', '12 қаз 2026'), lang: 'kz' },
+    { ini: 'ИС', name: t('Исаева Сауле', 'Исаева Сәуле'), email: 's.isayeva@example.kz', test: 'Инженер по ИВС', st: 'failed', stage: t('НЕ ПРОЙДЕНО', 'ӨТПЕДІ'), date: t('11 окт 2026', '11 қаз 2026'), lang: 'ru' },
+    { ini: 'ТА', name: t('Тулеуов Арман', 'Төлеуов Арман'), email: 'a.tuleuov@example.kz', test: 'Сетевой администратор', st: 'passed', stage: t('ПРОЙДЕНО', 'ӨТТІ'), date: t('10 окт 2026', '10 қаз 2026'), lang: 'kz' },
+  ].map((r, i) => ({ ...r, idx: i }));
+
+  return React.createElement(AdminShell, { active: 'candidates' },
+    React.createElement('div', { style: { maxWidth: 1200, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 24, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Кандидаты', 'Кандидаттар')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Управление участниками процедур оценки', 'Бағалау рәсімдеріне қатысушыларды басқару')),
+        ),
+        React.createElement(Btn, { icon: Icons.plus, onClick: () => {} }, t('Добавить кандидата', 'Кандидат қосу')),
+      ),
+
+      // Toolbar
+      React.createElement('div', { style: { display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' } },
+        React.createElement(SearchBar, { placeholder: t('Поиск по имени или email…', 'Аты немесе email бойынша іздеу…'), value: q, onChange: setQ }),
+        React.createElement(FormSelect, { value: '', onChange: () => {}, placeholder: t('Все статусы', 'Барлық мәртебелер'), options: [t('Активные', 'Белсенді'), t('Пройдено', 'Өтті'), t('Не пройдено', 'Өтпеді')] }),
+        React.createElement(FormSelect, { value: '', onChange: () => {}, placeholder: t('Все тесты', 'Барлық тестер'), options: ['Сетевой администратор', 'Системный администратор', 'Data Scientist'] }),
+      ),
+
+      // Table
+      React.createElement(DataTable, {
+        onRowClick: () => {},
+        columns: [
+          { key: 'name', label: t('Кандидат', 'Кандидат'), render: r => React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } }, React.createElement(Avatar, { initials: r.ini, size: 36 }), React.createElement('div', { style: { minWidth: 0 } }, React.createElement('div', { style: { fontWeight: 600, whiteSpace: 'nowrap' } }, r.name), React.createElement('div', { style: { fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.email))) },
+          { key: 'test', label: t('Тест', 'Тест'), render: r => React.createElement('span', { style: { whiteSpace: 'nowrap', fontSize: 14 } }, r.test) },
+          { key: 'lang', label: t('Язык', 'Тіл'), render: r => React.createElement(LangPill, { lang: r.lang }) },
+          { key: 'session', label: t('Сессия', 'Сессия'), render: r => React.createElement(SessionCombobox, { listId: 'sl-' + r.idx, value: sessions[r.idx] || '', onChange: v => setSessions(s => ({ ...s, [r.idx]: v })) }) },
+          { key: 'stage', label: t('Статус', 'Мәртебесі'), render: r => React.createElement(StatusPill, { status: r.st, label: r.stage }) },
+          { key: 'date', label: t('Обновлено', 'Жаңартылды'), render: r => React.createElement('span', { style: { color: 'var(--muted)', whiteSpace: 'nowrap', fontSize: 13 } }, r.date) },
+          { key: 'a', label: '', render: r => React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', display: 'flex' } }, Icons.chevronRight) },
+        ],
+        rows: rowsBase,
+      }),
+
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, flexWrap: 'wrap', gap: 12 } },
+        React.createElement('span', { style: { fontSize: 14, color: 'var(--muted)' } }, t('Показано 6 из 142', '142-ден 6 көрсетілді')),
+        React.createElement(Pagination, { current: page, total: 24, onChange: setPage }),
+      ),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(Candidates));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

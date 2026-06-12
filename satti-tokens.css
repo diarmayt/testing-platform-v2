@@ -1,0 +1,104 @@
+/* ============================================
+   СӘТТІ Design System — CSS Tokens & Base
+   Source of truth: DESIGN.md
+   ============================================ */
+:root {
+  /* Colors */
+  --bg: #FBFAF7;
+  --surface: #FFFFFF;
+  --ink: #16302E;
+  --muted: #5E6E6B;
+  --border: #E7E3DB;
+  --primary: #0F766E;
+  --primary-hover: #0C5F58;
+  --primary-light: rgba(15,118,110,0.08);
+  --primary-lighter: rgba(15,118,110,0.04);
+  --accent: #B68A2E;
+  --accent-light: rgba(182,138,46,0.1);
+  --success: #167A3C;
+  --success-light: rgba(22,122,60,0.1);
+  --danger: #B3261E;
+  --danger-light: rgba(179,38,30,0.1);
+  --warning: #B68A2E;
+  --warning-light: rgba(182,138,46,0.12);
+
+  /* Typography */
+  --font-heading: 'Lora', 'PT Serif', Georgia, serif;
+  --font-body: 'Manrope', 'PT Sans', system-ui, sans-serif;
+
+  /* Sizes */
+  --hero: clamp(40px, 5vw, 56px);
+  --h1: clamp(26px, 3vw, 32px);
+  --h2: clamp(20px, 2.5vw, 24px);
+  --h3: 20px;
+  --question: 20px;
+  --body: 16px;
+  --small: 14px;
+  --xs: 12px;
+
+  /* Spacing */
+  --sp-2: 2px;
+  --sp-4: 4px;
+  --sp-6: 6px;
+  --sp-8: 8px;
+  --sp-10: 10px;
+  --sp-12: 12px;
+  --sp-16: 16px;
+  --sp-20: 20px;
+  --sp-24: 24px;
+  --sp-32: 32px;
+  --sp-40: 40px;
+  --sp-48: 48px;
+
+  /* Layout */
+  --container-max: 1200px;
+  --readable-max: 720px;
+  --sidebar-w: 220px;
+
+  /* Radii */
+  --r-btn: 10px;
+  --r-card: 16px;
+  --r-pill: 999px;
+  --r-sm: 6px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(22,48,46,0.04), 0 4px 24px rgba(22,48,46,0.06);
+  --shadow-hover: 0 1px 2px rgba(22,48,46,0.06), 0 8px 32px rgba(22,48,46,0.08);
+  --shadow-sm: 0 1px 3px rgba(22,48,46,0.06);
+
+  /* Transitions */
+  --ease: 0.2s ease;
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  min-height: 100dvh;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; display: block; }
+button { font-family: var(--font-body); }
+input, select, textarea { font-family: var(--font-body); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Selection */
+::selection { background: rgba(15,118,110,0.15); color: var(--ink); }
+
+/* Focus visible */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Text helpers */
+.text-pretty { text-wrap: pretty; }

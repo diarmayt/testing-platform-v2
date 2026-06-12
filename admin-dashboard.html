@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дашборд — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function AdminDashboard() {
+  const { t } = useLang();
+  return React.createElement(AdminShell, { active: 'overview' },
+    React.createElement('div', { style: { maxWidth: 1100, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Дашборд', 'Дашборд')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Добро пожаловать в систему управления сертификацией', 'Сертификаттауды басқару жүйесіне қош келдіңіз')),
+        ),
+        React.createElement(Btn, { icon: Icons.plus, onClick: () => window.location.href = 'admin-create-test.html' }, t('Создать тест', 'Тест жасау')),
+      ),
+
+      // Metrics
+      React.createElement('div', { style: { display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement(MetricCard, { label: t('Тестов опубликовано', 'Жарияланған тест'), value: '24', change: '+12%', icon: Icons.fileText }),
+        React.createElement(MetricCard, { label: t('Тестирований за месяц', 'Айдағы тестілеу'), value: '142', icon: Icons.clipboard, accent: 'var(--accent)' }),
+        React.createElement(MetricCard, { label: t('Тестирований сегодня', 'Бүгін тестілеу'), value: '8', icon: Icons.clock, accent: 'var(--accent)' }),
+      ),
+
+      // Recent procedures
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
+        React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600 } }, t('Последние процедуры', 'Соңғы рәсімдер')),
+        React.createElement('a', { href: 'admin-journal.html', style: { fontSize: 14, fontWeight: 600, color: 'var(--primary)' } }, t('Смотреть все', 'Барлығын көру')),
+      ),
+      React.createElement('div', { style: { marginBottom: 28 } },
+        React.createElement(DataTable, {
+          onRowClick: () => {},
+          columns: [
+            { key: 'name', label: t('Кандидат (ФИО)', 'Кандидат (Аты-жөні)'), render: r => React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } }, React.createElement(Avatar, { initials: r.ini, size: 34 }), React.createElement('span', { style: { fontWeight: 600 } }, r.name)) },
+            { key: 'test', label: t('Тест', 'Тест') },
+            { key: 'stage', label: t('Стадия', 'Кезең'), render: r => React.createElement(StatusPill, { status: r.st, label: r.stage }) },
+            { key: 'date', label: t('Дата', 'Күні'), render: r => React.createElement('span', { style: { color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.date) },
+            { key: 'action', label: t('Действие', 'Әрекет'), render: r => React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', display: 'flex' } }, r.icon) },
+          ],
+          rows: [
+            { ini: 'АН', name: t('Ахметов Нурлан', 'Ахметов Нұрлан'), test: 'Сетевой администратор', stage: t('ТЕСТ СДАН', 'ТЕСТ ТАПСЫРДЫ'), st: 'theory_passed', date: t('14 окт 2026', '14 қаз 2026'), icon: Icons.eye2 },
+            { ini: 'СК', name: t('Смагулова Камила', 'Смағұлова Камила'), test: 'Специалист по ИБ', stage: t('ТЕСТ СДАН', 'ТЕСТ ТАПСЫРДЫ'), st: 'theory_passed', date: t('14 окт 2026', '14 қаз 2026'), icon: Icons.eye2 },
+            { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), test: 'Системный администратор', stage: t('ЗАВЕРШЕНО', 'АЯҚТАЛДЫ'), st: 'passed', date: t('13 окт 2026', '13 қаз 2026'), icon: Icons.checkCircle },
+            { ini: 'БМ', name: t('Бекжанов Мурат', 'Бекжанов Мұрат'), test: 'Администратор БД', stage: t('ТЕСТ НЕ СДАН', 'ТЕСТ ТАПСЫРМАДЫ'), st: 'failed', date: t('12 окт 2026', '12 қаз 2026'), icon: Icons.xCircle },
+          ],
+        }),
+      ),
+
+
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(AdminDashboard));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

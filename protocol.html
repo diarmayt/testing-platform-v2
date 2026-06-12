@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Протокол — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --doc-ink: #111111;
+    --doc-muted: #555555;
+    --doc-line: #222222;
+    --doc-faint: #d9d6cf;
+    --accent: #0F766E;
+    --font-heading: 'Lora', 'PT Serif', Georgia, serif;
+    --font-body: 'Manrope', 'PT Sans', system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--doc-ink);
+    background: #6b6b6b;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Screen-only toolbar ───────────────────────── */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    background: #1f1f1f;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    flex-wrap: wrap;
+  }
+  .toolbar-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn svg { width: 17px; height: 17px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #0C5F58; }
+  .btn-ghost { background: transparent; color: #d8d8d8; border: 1px solid #4a4a4a; }
+  .btn-ghost:hover { background: #2c2c2c; color: #fff; }
+
+  /* ── Document sheet ────────────────────────────── */
+  .sheet-wrap { padding: 28px 16px 60px; display: flex; justify-content: center; }
+  .sheet {
+    width: 210mm;
+    max-width: 100%;
+    min-height: 297mm;
+    background: #fff;
+    padding: 22mm 20mm 20mm;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.35);
+  }
+
+  /* ── Letterhead ────────────────────────────────── */
+  .letterhead {
+    text-align: center;
+    border-bottom: 2px solid var(--doc-line);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .letterhead .org-kz { font-size: 12.5px; font-weight: 600; color: var(--doc-ink); }
+  .letterhead .org-ru { font-size: 12.5px; color: var(--doc-muted); margin-top: 2px; }
+  .letterhead .brand {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    margin: 8px 0 2px;
+  }
+
+  /* ── Document title ────────────────────────────── */
+  .doc-title {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .doc-title h1 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .doc-subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: var(--doc-muted);
+    margin-bottom: 22px;
+  }
+
+  /* ── Fill-in fields ────────────────────────────── */
+  .fld {
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    color: var(--doc-ink);
+    border: none;
+    border-bottom: 1px solid var(--doc-line);
+    background: transparent;
+    outline: none;
+    padding: 2px 6px;
+    line-height: 1.7;
+  }
+  .fld:focus { border-bottom-color: var(--accent); background: rgba(15,118,110,0.04); }
+  .fld::placeholder { color: #b8b4ab; font-style: italic; }
+
+  .meta-row {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .meta-item { display: flex; align-items: baseline; gap: 8px; }
+  .meta-item .lbl { font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+
+  /* ── Commission block ──────────────────────────── */
+  .section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--doc-muted);
+    margin: 22px 0 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--doc-faint);
+  }
+  .person-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .person-row .role { font-size: 13px; font-weight: 600; }
+  .person-row .fld { width: 100%; }
+  .remove-btn {
+    width: 26px; height: 26px;
+    border: 1px solid var(--doc-faint);
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #b3261e;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .remove-btn:hover { background: #fbe9e8; border-color: #b3261e; }
+  .remove-btn svg { width: 14px; height: 14px; }
+
+  /* Practice toggle buttons */
+  .pt-wrap { display: flex; flex-direction: column; gap: 5px; align-items: center; }
+  .pt-btn {
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1.5px solid;
+    transition: all 0.15s;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+  .pt-none { color: #999; border-color: #ccc; background: #fff; }
+  .pt-none:hover { border-color: #888; color: #555; }
+  .pt-pass { color: #fff; border-color: var(--success); background: var(--success); }
+  .pt-fail { color: #fff; border-color: var(--danger); background: var(--danger); }
+  .theory-text { font-size: 12.5px; }
+  @media print {
+    .pt-none { display: none; }
+    .pt-pass { color: var(--success) !important; background: none !important; border-color: var(--success) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .pt-fail { color: var(--danger) !important; background: none !important; border-color: var(--danger) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 0;
+    margin-top: 2px;
+  }
+  .add-btn svg { width: 15px; height: 15px; }
+  .members-head {
+    display: grid;
+    grid-template-columns: 130px 1fr 1fr 1fr auto;
+    gap: 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--doc-muted);
+    margin-bottom: 6px;
+    padding: 0 6px;
+  }
+
+  /* ── Candidates table ──────────────────────────── */
+  table.candidates {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 26px;
+    font-size: 12.5px;
+  }
+  table.candidates th,
+  table.candidates td {
+    border: 1px solid var(--doc-line);
+    padding: 8px 9px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.candidates th {
+    background: #f3f1ec;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  table.candidates td.center { text-align: center; }
+  table.candidates .cell-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--doc-ink);
+    padding: 0;
+  }
+  table.candidates .cell-input:focus { background: rgba(15,118,110,0.06); }
+  table.candidates tr:nth-child(even) td { background: #fafaf8; }
+  table.candidates tr:nth-child(even) td .cell-input:focus { background: rgba(15,118,110,0.06); }
+  .table-tools { display: flex; justify-content: flex-end; margin: -18px 0 26px; }
+
+  /* ── Signatures ────────────────────────────────── */
+  .signatures { margin-top: 30px; }
+  .sign-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: 24px;
+    align-items: flex-end;
+    margin-bottom: 26px;
+  }
+  .sign-role { font-size: 13.5px; font-weight: 600; padding-bottom: 4px; }
+  .sign-line { text-align: center; }
+  .sign-line .rule {
+    border-bottom: 1px solid var(--doc-line);
+    height: 22px;
+  }
+  .sign-line .cap {
+    font-size: 10.5px;
+    color: var(--doc-muted);
+    margin-top: 3px;
+  }
+  .sign-divider { border: none; border-top: 1px solid var(--doc-faint); margin: 18px 0; }
+
+  .doc-footer {
+    margin-top: 36px;
+    padding-top: 12px;
+    border-top: 1px solid var(--doc-faint);
+    font-size: 11px;
+    color: var(--doc-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ── Print rules ───────────────────────────────── */
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: #fff; }
+    .toolbar { display: none !important; }
+    .sheet-wrap { padding: 0; }
+    .sheet { width: auto; min-height: auto; box-shadow: none; padding: 0; }
+    .add-btn, .remove-btn, .table-tools { display: none !important; }
+    .fld { border-bottom: 1px solid #000; }
+    .fld::placeholder { color: transparent; }
+    table.candidates th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 760px) {
+    .person-row, .members-head { grid-template-columns: 1fr; }
+    .members-head { display: none; }
+    .sign-row { grid-template-columns: 1fr; gap: 10px; }
+    .sheet { padding: 18px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Toolbar (screen only) ───────────────────────── -->
+<div class="toolbar">
+  <span class="toolbar-title">Протокол заседания комиссии</span>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" onclick="window.location.href='admin-journal.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Назад
+    </button>
+    <button class="btn btn-ghost" onclick="window.location.href='index.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Все экраны
+    </button>
+    <button class="btn btn-ghost" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Скачать PDF
+    </button>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Печать
+    </button>
+  </div>
+</div>
+
+<!-- ── Document ────────────────────────────────────── -->
+<div class="sheet-wrap">
+  <div class="sheet">
+
+    <!-- Letterhead -->
+    <div class="letterhead">
+      <div class="org-kz">«СӘТТІ» ІТ мамандарды сертификаттау орталығы» ЖШС</div>
+      <div class="org-ru">ТОО «Центр сертификации ІТ-специалистов «СӘТТІ»»</div>
+      <div class="brand">СӘТТІ</div>
+    </div>
+
+    <!-- Title -->
+    <div class="doc-title">
+      <h1>Протокол</h1>
+    </div>
+    <p class="doc-subtitle">заседания комиссии по оценке квалификации ИТ-специалистов</p>
+
+    <!-- Meta -->
+    <div class="meta-row">
+      <div class="meta-item">
+        <span class="lbl">Номер протокола №</span>
+        <input class="fld" style="width:120px" placeholder="________">
+      </div>
+      <div class="meta-item">
+        <span class="lbl">Дата заседания:</span>
+        <input class="fld" type="date" style="width:170px">
+      </div>
+    </div>
+
+    <!-- Commission composition -->
+    <div class="section-label">Состав комиссии</div>
+
+    <!-- Chair -->
+    <div class="members-head">
+      <span>Роль</span><span>ФИО</span><span>Должность</span><span>Организация</span><span></span>
+    </div>
+    <div class="person-row">
+      <span class="role">Председатель</span>
+      <input class="fld" placeholder="Фамилия Имя Отчество">
+      <input class="fld" placeholder="должность">
+      <input class="fld" placeholder="организация">
+      <span></span>
+    </div>
+
+    <!-- Members (addable) -->
+    <div id="members"></div>
+    <button class="add-btn" onclick="addMember()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Добавить члена комиссии
+    </button>
+
+    <!-- Secretary -->
+    <div class="person-row" style="margin-top:14px">
+      <span class="role">Секретарь</span>
+      <input class="fld" placeholder="Фамилия Имя Отчество">
+      <input class="fld" placeholder="должность">
+      <input class="fld" placeholder="организация">
+      <span></span>
+    </div>
+
+    <!-- Candidates table -->
+    <div class="section-label">Результаты кандидатов</div>
+    <table class="candidates">
+      <thead>
+        <tr>
+          <th style="width:36px">№</th>
+          <th style="width:22%">ФИО</th>
+          <th>Результат<br>тестирования</th>
+          <th style="width:120px">Результат<br>практического этапа</th>
+          <th>Профессия</th>
+          <th style="width:64px">Уровень<br>ОРК</th>
+          <th style="width:96px">Срок<br>действия</th>
+        </tr>
+      </thead>
+      <tbody id="candidates"></tbody>
+    </table>
+    <div class="table-tools">
+      <button class="add-btn" onclick="addRow()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Добавить строку
+      </button>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signatures">
+      <div class="section-label">Подписи членов комиссии</div>
+
+      <div class="sign-row">
+        <span class="sign-role">Председатель комиссии</span>
+        <div class="sign-line"><div class="rule"></div><div class="cap">подпись</div></div>
+        <div class="sign-line"><div class="rule"></div><div class="cap">Ф.И.О.</div></div>
+      </div>
+
+      <hr class="sign-divider">
+
+      <div id="sign-members"></div>
+
+      <hr class="sign-divider">
+
+      <div class="sign-row">
+        <span class="sign-role">Секретарь</span>
+        <div class="sign-line"><div class="rule"></div><div class="cap">подпись</div></div>
+        <div class="sign-line"><div class="rule"></div><div class="cap">Ф.И.О.</div></div>
+      </div>
+    </div>
+
+    <div class="doc-footer">
+      <span>Документ сформирован в системе оценки квалификации «СӘТТІ»</span>
+      <span>М.П.</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Addable commission members ──────────────────
+  let memberCount = 0;
+  const membersBox = document.getElementById('members');
+  const signMembersBox = document.getElementById('sign-members');
+
+  function renderSignMembers() {
+    signMembersBox.innerHTML = '';
+    const n = membersBox.querySelectorAll('.person-row').length;
+    const count = Math.max(n, 1);
+    for (let i = 0; i < count; i++) {
+      const row = document.createElement('div');
+      row.className = 'sign-row';
+      row.innerHTML =
+        '<span class="sign-role">Член комиссии</span>' +
+        '<div class="sign-line"><div class="rule"></div><div class="cap">подпись</div></div>' +
+        '<div class="sign-line"><div class="rule"></div><div class="cap">Ф.И.О.</div></div>';
+      signMembersBox.appendChild(row);
+    }
+  }
+
+  function addMember() {
+    memberCount++;
+    const row = document.createElement('div');
+    row.className = 'person-row';
+    row.innerHTML =
+      '<span class="role">Член комиссии</span>' +
+      '<input class="fld" placeholder="Фамилия Имя Отчество">' +
+      '<input class="fld" placeholder="должность">' +
+      '<input class="fld" placeholder="организация">' +
+      '<button class="remove-btn" title="Удалить" onclick="this.parentElement.remove(); renderSignMembers();">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+      '</button>';
+    membersBox.appendChild(row);
+    renderSignMembers();
+  }
+
+  // ── Candidates table rows ───────────────────────
+  const profOptions = ['Инженер по ИВС', 'Администратор БД', 'Системный администратор', 'Сетевой администратор', 'Специалист по ИБ'];
+  const candidatesBox = document.getElementById('candidates');
+  let rowCount = 0;
+
+  function practiceToggle(id) {
+    var td = document.getElementById('pt-' + id);
+    var btns = td.querySelectorAll('.pt-btn');
+    btns.forEach(function(btn) {
+      var val = btn.getAttribute('data-val');
+      var current = td.getAttribute('data-selected');
+      if (val === current) {
+        // clicking selected — deselect
+        td.setAttribute('data-selected', '');
+        btn.className = 'pt-btn pt-none';
+      }
+    });
+  }
+
+  function setPractice(id, val) {
+    var td = document.getElementById('pt-' + id);
+    var prev = td.getAttribute('data-selected');
+    if (prev === val) {
+      // toggle off
+      td.setAttribute('data-selected', '');
+    } else {
+      td.setAttribute('data-selected', val);
+    }
+    td.querySelectorAll('.pt-btn').forEach(function(btn) {
+      var bval = btn.getAttribute('data-val');
+      var selected = td.getAttribute('data-selected');
+      if (bval === 'pass') btn.className = 'pt-btn ' + (selected === 'pass' ? 'pt-pass' : 'pt-none');
+      if (bval === 'fail') btn.className = 'pt-btn ' + (selected === 'fail' ? 'pt-fail' : 'pt-none');
+    });
+  }
+
+  var practiceCounter = 0;
+
+  function makePracticeCell(initVal) {
+    practiceCounter++;
+    var id = practiceCounter;
+    var init = initVal || '';
+    return '<td class="center" id="pt-' + id + '" data-selected="' + init + '">' +
+      '<div class="pt-wrap">' +
+        '<button type="button" class="pt-btn ' + (init === 'pass' ? 'pt-pass' : 'pt-none') + '" ' +
+          'data-val="pass" onclick="setPractice(' + id + ', \'pass\')">Сдал</button>' +
+        '<button type="button" class="pt-btn ' + (init === 'fail' ? 'pt-fail' : 'pt-none') + '" ' +
+          'data-val="fail" onclick="setPractice(' + id + ', \'fail\')">Не сдал</button>' +
+      '</div>' +
+    '</td>';
+  }
+
+  function addRow(data) {
+    rowCount++;
+    data = data || {};
+    var tr = document.createElement('tr');
+    var profOpts = profOptions.map(function(p){
+      return '<option' + (data.prof === p ? ' selected' : '') + '>' + p + '</option>';
+    }).join('');
+    tr.innerHTML =
+      '<td class="center">' + rowCount + '</td>' +
+      '<td><input class="cell-input" value="' + (data.name || '') + '" placeholder="Фамилия Имя Отчество"></td>' +
+      '<td class="center"><span class="theory-text">' + (data.theory || '—') + '</span></td>' +
+      makePracticeCell(data.practiceVal || '') +
+      '<td><select class="cell-input"><option value=""></option>' + profOpts + '</select></td>' +
+      '<td class="center"><input class="cell-input" style="text-align:center" value="' + (data.ork || '') + '" placeholder="—"></td>' +
+      '<td class="center"><input class="cell-input" style="text-align:center" value="' + (data.valid || '') + '" placeholder="дата"></td>';
+    candidatesBox.appendChild(tr);
+  }
+
+  // Seed rows
+  addMember();
+  addMember();
+  addRow({ name: 'Ахметов Нурлан', theory: 'Сдал (82%)', practiceVal: 'pass', prof: 'Сетевой администратор', ork: '5', valid: '14.10.2029' });
+  addRow({ name: 'Смагулова Камила', theory: 'Сдал (91%)', practiceVal: 'pass', prof: 'Специалист по ИБ', ork: '6', valid: '14.10.2029' });
+  addRow({ name: 'Ержанова Дана', theory: 'Не сдал (55%)', practiceVal: '', prof: 'Системный администратор', ork: '4', valid: '—' });
+  addRow();
+  addRow();
+</script>
+
+</body>
+</html>

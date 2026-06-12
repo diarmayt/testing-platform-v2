@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Журнал результатов — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function ResultsJournal() {
+  const { t } = useLang();
+  const [page, setPage] = React.useState(1);
+  const [fDate, setFDate] = React.useState('');
+  const [fSession, setFSession] = React.useState('');
+  const [fProfession, setFProfession] = React.useState('');
+  const [fTheory, setFTheory] = React.useState('');
+  const [fPractice, setFPractice] = React.useState('');
+
+  const rows = [
+    { n: 1, ini: 'АН', name: t('Ахметов Нурлан', 'Ахметов Нұрлан'), prof: t('Сетевой администратор', 'Желілік әкімші'), ork: 5, lang: 'ru', theory: 82, theoryPass: true, practiceStatus: 'done', session: t('Сессия 1', '1-сессия'), date: '14.10.2026' },
+    { n: 2, ini: 'СК', name: t('Смагулова Камила', 'Смағұлова Камила'), prof: t('Специалист по ИБ', 'АҚ маманы'), ork: 6, lang: 'kz', theory: 91, theoryPass: true, practiceStatus: 'done', session: t('Сессия 1', '1-сессия'), date: '14.10.2026' },
+    { n: 3, ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), prof: t('Системный администратор', 'Жүйелік әкімші'), ork: 4, lang: 'ru', theory: 55, theoryPass: false, practiceStatus: 'none', session: t('Сессия 1', '1-сессия'), date: '13.10.2026' },
+    { n: 4, ini: 'БМ', name: t('Бекжанов Мурат', 'Бекжанов Мұрат'), prof: t('Администратор БД', 'ДҚ әкімшісі'), ork: 5, lang: 'kz', theory: 76, theoryPass: true, practiceStatus: 'pending', session: t('Утренняя группа', 'Таңғы топ'), date: '12.10.2026' },
+    { n: 5, ini: 'ИС', name: t('Исаева Сауле', 'Исаева Сәуле'), prof: t('Инженер по ИВС', 'ИВЖ инженері'), ork: 4, lang: 'ru', theory: 64, theoryPass: false, practiceStatus: 'none', session: t('Вечерняя группа', 'Кешкі топ'), date: '11.10.2026' },
+    { n: 6, ini: 'ТА', name: t('Тулеуов Арман', 'Төлеуов Арман'), prof: t('Сетевой администратор', 'Желілік әкімші'), ork: 5, lang: 'kz', theory: 88, theoryPass: true, practiceStatus: 'done', session: t('Сессия 2', '2-сессия'), date: '10.10.2026' },
+  ];
+
+  // Score cell helper
+  const ScoreCell = ({ val, pass }) => {
+    if (val === null) return React.createElement('span', { style: { color: 'var(--muted)' } }, '—');
+    return React.createElement('span', { style: { fontWeight: 700, color: pass ? 'var(--success)' : 'var(--danger)' } }, val + '%');
+  };
+
+  // Theory status pill
+  const TheoryPill = ({ pass }) => React.createElement(StatusPill, { status: pass ? 'passed' : 'failed', label: pass ? t('СДАЛ', 'ТАПСЫРДЫ') : t('НЕ СДАЛ', 'ТАПСЫРМАДЫ') });
+
+  // Practice status pill
+  const PracticePill = ({ status }) => {
+    if (status === 'done') return React.createElement(StatusPill, { status: 'passed', label: t('СДАЛ', 'ТАПСЫРДЫ') });
+    if (status === 'pending') return React.createElement(StatusPill, { status: 'review', label: t('НЕ ПРОВЕРЕНО', 'ТЕКСЕРІЛМЕДІ') });
+    return React.createElement('span', { style: { color: 'var(--muted)', fontSize: 13 } }, '—');
+  };
+
+  // Lang pill
+  const LangPill = ({ lang }) => React.createElement('span', { style: { display: 'inline-flex', padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, background: lang === 'ru' ? 'rgba(94,110,107,0.1)' : 'var(--primary-light)', color: lang === 'ru' ? 'var(--muted)' : 'var(--primary)' } }, lang === 'ru' ? 'Рус' : 'Қаз');
+
+  // Filter selects
+  const FilterSel = ({ placeholder, value, onChange, options }) =>
+    React.createElement('select', {
+      value, onChange: e => onChange(e.target.value),
+      style: { height: 40, padding: '0 32px 0 12px', fontFamily: 'var(--font-body)', fontSize: 14, color: value ? 'var(--ink)' : 'var(--muted)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none', appearance: 'none', backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235E6E6B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', cursor: 'pointer', whiteSpace: 'nowrap' },
+      onFocus: e => { e.target.style.borderColor = 'var(--primary)'; },
+      onBlur: e => { e.target.style.borderColor = 'var(--border)'; },
+    },
+      React.createElement('option', { value: '' }, placeholder),
+      options.map(o => React.createElement('option', { key: o.value || o, value: o.value || o }, o.label || o))
+    );
+
+  return React.createElement(AdminShell, { active: 'journal' },
+    React.createElement('div', { style: { maxWidth: 1300, margin: '0 auto', padding: '32px 28px' } },
+
+      // Title + action buttons
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 24, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Журнал результатов', 'Нәтижелер журналы')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Итоги процедур оценки квалификации', 'Біліктілікті бағалау рәсімдерінің қорытындылары')),
+        ),
+        React.createElement('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' } },
+          React.createElement(Btn, { variant: 'secondary', size: 'sm', icon: Icons.download, onClick: () => window.location.href = 'report-day.html' }, t('Отчёт за день', 'Күндік есеп')),
+          React.createElement(Btn, { variant: 'secondary', size: 'sm', icon: Icons.fileText, onClick: () => window.location.href = 'protocol.html' }, t('Сформировать протокол', 'Хаттама жасау')),
+          React.createElement(Btn, { size: 'sm', icon: Icons.clipboard, onClick: () => window.location.href = 'report-appeal.html' }, t('Отчёт по апелляции', 'Апелляция есебі')),
+        ),
+      ),
+
+      // Filters
+      React.createElement('div', { style: { display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center', padding: '16px 20px', background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' } },
+        React.createElement('span', { style: { fontSize: 13, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.04em', textTransform: 'uppercase', marginRight: 4 } }, Icons.filter),
+        React.createElement('input', { type: 'date', value: fDate, onChange: e => setFDate(e.target.value),
+          style: { height: 40, padding: '0 12px', fontFamily: 'var(--font-body)', fontSize: 14, color: fDate ? 'var(--ink)' : 'var(--muted)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none', cursor: 'pointer' } }),
+        React.createElement(FilterSel, { placeholder: t('Все сессии', 'Барлық сессиялар'), value: fSession, onChange: setFSession, options: [t('Сессия 1','1-сессия'), t('Сессия 2','2-сессия'), t('Утренняя группа','Таңғы топ'), t('Вечерняя группа','Кешкі топ')] }),
+        React.createElement(FilterSel, { placeholder: t('Все профессии', 'Барлық кәсіптер'), value: fProfession, onChange: setFProfession, options: [t('Инженер по ИВС','ИВЖ инженері'), t('Администратор БД','ДҚ әкімшісі'), t('Системный администратор','Жүйелік әкімші'), t('Сетевой администратор','Желілік әкімші'), t('Специалист по ИБ','АҚ маманы')] }),
+        React.createElement(FilterSel, { placeholder: t('Тест: все', 'Тест: барлығы'), value: fTheory, onChange: setFTheory, options: [{value:'pass',label:t('Сдал','Тапсырды')},{value:'fail',label:t('Не сдал','Тапсырмады')}] }),
+        React.createElement(FilterSel, { placeholder: t('Практика: все', 'Практика: барлығы'), value: fPractice, onChange: setFPractice, options: [{value:'pass',label:t('Сдал','Тапсырды')},{value:'fail',label:t('Не сдал','Тапсырмады')},{value:'pending',label:t('Не проверено','Тексерілмеді')}] }),
+        (fDate || fSession || fProfession || fTheory || fPractice) &&
+          React.createElement('button', { onClick: () => { setFDate(''); setFSession(''); setFProfession(''); setFTheory(''); setFPractice(''); }, style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--danger)', fontWeight: 600 } }, t('Сбросить', 'Тазалау')),
+      ),
+
+      // Table
+      React.createElement('div', { style: { overflowX: 'auto', borderRadius: 16, border: '1px solid var(--border)', background: 'var(--surface)' } },
+        React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse', minWidth: 900 } },
+          React.createElement('thead', null,
+            React.createElement('tr', null,
+              ['№', t('ФИО','Аты-жөні'), t('Профессия','Кәсіп'), t('ОРК','ҰБС'), t('Язык','Тіл'), t('Тест (%)','Тест (%)'), t('Статус теста','Тест мәртебесі'), t('Практика','Практика'), t('Сессия','Сессия')].map((h, i) =>
+                React.createElement('th', { key: i, style: { padding: '12px 14px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: i === 0 ? 'center' : 'left', borderBottom: '2px solid var(--border)', whiteSpace: 'nowrap' } }, h)
+              )
+            )
+          ),
+          React.createElement('tbody', null,
+            rows.map((r, ri) =>
+              React.createElement('tr', { key: ri, style: { cursor: 'default', transition: 'background .1s' },
+                onMouseOver: e => e.currentTarget.style.background = 'var(--primary-lighter)',
+                onMouseOut: e => e.currentTarget.style.background = 'transparent' },
+                React.createElement('td', { style: { padding: '14px', fontSize: 14, fontWeight: 600, color: 'var(--muted)', textAlign: 'center', borderBottom: '1px solid var(--border)' } }, r.n),
+                React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)' } },
+                  React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
+                    React.createElement(Avatar, { initials: r.ini, size: 32 }),
+                    React.createElement('span', { style: { fontWeight: 600, fontSize: 14, whiteSpace: 'nowrap' } }, r.name),
+                  )
+                ),
+                React.createElement('td', { style: { padding: '14px', fontSize: 14, borderBottom: '1px solid var(--border)', whiteSpace: 'nowrap' } }, r.prof),
+                React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)', textAlign: 'center' } },
+                  React.createElement('span', { style: { display: 'inline-flex', padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, background: 'var(--accent-light)', color: 'var(--accent)' } }, r.ork)
+                ),
+                React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)' } }, React.createElement(LangPill, { lang: r.lang })),
+                React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)', textAlign: 'center' } }, React.createElement(ScoreCell, { val: r.theory, pass: r.theoryPass })),
+                React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)' } }, React.createElement(TheoryPill, { pass: r.theoryPass })),
+                React.createElement('td', { style: { padding: '14px', borderBottom: '1px solid var(--border)' } }, React.createElement(PracticePill, { status: r.practiceStatus })),
+                React.createElement('td', { style: { padding: '14px', fontSize: 14, color: 'var(--muted)', borderBottom: '1px solid var(--border)', whiteSpace: 'nowrap' } }, r.session),
+              )
+            )
+          ),
+        ),
+      ),
+
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, flexWrap: 'wrap', gap: 12 } },
+        React.createElement('span', { style: { fontSize: 14, color: 'var(--muted)' } }, t('Показано 6 из 142', '142-ден 6 көрсетілді')),
+        React.createElement(Pagination, { current: page, total: 24, onChange: setPage }),
+      ),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(ResultsJournal));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

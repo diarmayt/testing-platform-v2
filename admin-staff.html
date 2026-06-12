@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сотрудники — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function RoleBadge({ role }) {
+  const { t } = useLang();
+  const map = {
+    admin: { bg: 'var(--primary-light)', color: 'var(--primary)', label: t('Администратор', 'Әкімші') },
+    expert: { bg: 'var(--accent-light)', color: 'var(--accent)', label: t('Эксперт', 'Сарапшы') },
+    operator: { bg: 'rgba(94,110,107,0.1)', color: 'var(--muted)', label: t('Оператор', 'Оператор') },
+  };
+  const c = map[role];
+  return React.createElement('span', { style: { display: 'inline-flex', padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, background: c.bg, color: c.color } }, c.label);
+}
+
+function Staff() {
+  const { t } = useLang();
+  const rows = [
+    { ini: 'ИО', name: t('Оспанов Ислам', 'Оспанов Ислам'), email: 'i.ospanov@satti.kz', role: 'admin', status: 'active', last: t('сейчас', 'қазір') },
+    { ini: 'КА', name: t('Касымов Алибек', 'Қасымов Әлібек'), email: 'a.kassymov@satti.kz', role: 'expert', status: 'active', last: t('2 ч назад', '2 сағ бұрын') },
+    { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@satti.kz', role: 'expert', status: 'active', last: t('вчера', 'кеше') },
+    { ini: 'НТ', name: t('Нурланова Томирис', 'Нұрланова Томирис'), email: 't.nurlanova@satti.kz', role: 'operator', status: 'active', last: t('3 дня назад', '3 күн бұрын') },
+    { ini: 'СБ', name: t('Сериков Бауыржан', 'Сериков Бауыржан'), email: 'b.serikov@satti.kz', role: 'operator', status: 'invited', last: '—' },
+  ];
+
+  const perms = [
+    { label: t('Создание и редактирование тестов', 'Тесттерді жасау және өңдеу'), admin: true, expert: false, operator: false },
+    { label: t('Проверка практических заданий', 'Практикалық тапсырмаларды тексеру'), admin: true, expert: true, operator: false },
+    { label: t('Приглашение кандидатов', 'Кандидаттарды шақыру'), admin: true, expert: false, operator: true },
+    { label: t('Просмотр статистики', 'Статистиканы қарау'), admin: true, expert: true, operator: true },
+    { label: t('Управление сотрудниками', 'Қызметкерлерді басқару'), admin: true, expert: false, operator: false },
+  ];
+
+  const Cell = (on) => React.createElement('div', { style: { display: 'flex', justifyContent: 'center', color: on ? 'var(--success)' : 'var(--border)' } }, on ? Icons.checkCircle : React.createElement('span', { style: { fontSize: 18, color: 'var(--border)' } }, '—'));
+
+  return React.createElement(AdminShell, { active: 'staff' },
+    React.createElement('div', { style: { maxWidth: 1100, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Сотрудники и права', 'Қызметкерлер мен құқықтар')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Команда центра сертификации и роли доступа', 'Сертификаттау орталығының командасы және рұқсат рөлдері')),
+        ),
+        React.createElement(Btn, { icon: Icons.plus }, t('Добавить сотрудника', 'Қызметкер қосу')),
+      ),
+
+      // Staff table
+      React.createElement('div', { style: { marginBottom: 32 } },
+        React.createElement(DataTable, {
+          columns: [
+            { key: 'name', label: t('Сотрудник', 'Қызметкер'), render: r => React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } }, React.createElement(Avatar, { initials: r.ini, size: 36 }), React.createElement('div', { style: { minWidth: 0 } }, React.createElement('div', { style: { fontWeight: 600, whiteSpace: 'nowrap' } }, r.name), React.createElement('div', { style: { fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.email))) },
+            { key: 'role', label: t('Роль', 'Рөл'), render: r => React.createElement(RoleBadge, { role: r.role }) },
+            { key: 'status', label: t('Статус', 'Мәртебесі'), render: r => React.createElement(StatusPill, { status: r.status, label: r.status === 'active' ? t('АКТИВЕН', 'БЕЛСЕНДІ') : t('ПРИГЛАШЁН', 'ШАҚЫРЫЛДЫ') }) },
+            { key: 'last', label: t('Был(а)', 'Болды'), render: r => React.createElement('span', { style: { color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.last) },
+            { key: 'a', label: '', render: r => React.createElement('div', { style: { display: 'flex', gap: 8 } }, React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', display: 'flex' } }, Icons.edit)) },
+          ],
+          rows,
+        }),
+      ),
+
+      // Permissions matrix
+      React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600, marginBottom: 16 } }, t('Матрица прав доступа', 'Қол жеткізу құқықтарының матрицасы')),
+      React.createElement('div', { style: { overflowX: 'auto', borderRadius: 16, border: '1px solid var(--border)', background: 'var(--surface)' } },
+        React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse', minWidth: 560 } },
+          React.createElement('thead', null,
+            React.createElement('tr', null,
+              React.createElement('th', { style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'left', borderBottom: '2px solid var(--border)' } }, t('Разрешение', 'Рұқсат')),
+              [t('Администратор', 'Әкімші'), t('Эксперт', 'Сарапшы'), t('Оператор', 'Оператор')].map(h => React.createElement('th', { key: h, style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', borderBottom: '2px solid var(--border)' } }, h)),
+            )
+          ),
+          React.createElement('tbody', null,
+            perms.map((p, i) => React.createElement('tr', { key: i },
+              React.createElement('td', { style: { padding: '14px 16px', fontSize: 15, fontWeight: 500, borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, p.label),
+              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.admin)),
+              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.expert)),
+              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.operator)),
+            ))
+          ),
+        ),
+      ),
+    )
+  );
+}
+
+// ── Commission Section ────────────────────────────
+function PersonRow({ role, onRemove, showRemove }) {
+  const { t } = useLang();
+  return React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(120px, 160px) 1fr 1fr 1fr auto', gap: 12, alignItems: 'center', marginBottom: 12 } },
+    React.createElement('span', { style: { fontSize: 14, fontWeight: 600, color: 'var(--muted)' } }, role),
+    React.createElement('input', { placeholder: t('Фамилия Имя Отчество', 'Аты-жөні'), style: { height: 40, padding: '0 12px', fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none', width: '100%' } }),
+    React.createElement('input', { placeholder: t('Должность', 'Лауазым'), style: { height: 40, padding: '0 12px', fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none', width: '100%' } }),
+    React.createElement('input', { placeholder: t('Организация', 'Ұйым'), style: { height: 40, padding: '0 12px', fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, outline: 'none', width: '100%' } }),
+    showRemove
+      ? React.createElement('button', { onClick: onRemove, style: { width: 36, height: 36, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .15s' } }, Icons.trash)
+      : React.createElement('span', { style: { width: 36 } }),
+  );
+}
+
+function CommissionSection() {
+  const { t } = useLang();
+  const [members, setMembers] = React.useState([{ id: 1 }, { id: 2 }]);
+  const [saved, setSaved] = React.useState(false);
+
+  return React.createElement(Card, { style: { marginBottom: 0 } },
+    React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 } },
+      React.createElement('div', null,
+        React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600, marginBottom: 4 } }, t('Состав экзаменационной комиссии', 'Емтихан комиссиясының құрамы')),
+        React.createElement('p', { style: { fontSize: 14, color: 'var(--muted)' } }, t('Данные используются при формировании протоколов', 'Деректер хаттамаларды жасауда қолданылады')),
+      ),
+    ),
+
+    // Column headers
+    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(120px, 160px) 1fr 1fr 1fr auto', gap: 12, marginBottom: 8 } },
+      ['', t('ФИО', 'Аты-жөні'), t('Должность', 'Лауазым'), t('Организация', 'Ұйым'), ''].map((h, i) =>
+        React.createElement('span', { key: i, style: { fontSize: 11, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase' } }, h)
+      )
+    ),
+
+    // Chair
+    React.createElement(PersonRow, { role: t('Председатель', 'Төраға') }),
+
+    // Members
+    React.createElement('div', { style: { borderTop: '1px solid var(--border)', marginTop: 8, paddingTop: 16 } },
+      members.map((m, i) =>
+        React.createElement(PersonRow, { key: m.id, role: t('Член комиссии', 'Комиссия мүшесі'), showRemove: true, onRemove: () => setMembers(ms => ms.filter(x => x.id !== m.id)) })
+      ),
+      React.createElement('button', { onClick: () => setMembers(ms => [...ms, { id: Date.now() }]),
+        style: { display: 'inline-flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', fontSize: 14, fontWeight: 600, padding: '4px 0', marginBottom: 8 } },
+        Icons.plus, t('Добавить члена комиссии', 'Комиссия мүшесін қосу')
+      ),
+    ),
+
+    // Secretary
+    React.createElement('div', { style: { borderTop: '1px solid var(--border)', marginTop: 8, paddingTop: 16 } },
+      React.createElement(PersonRow, { role: t('Секретарь', 'Хатшы') }),
+    ),
+
+    // Save button
+    React.createElement('div', { style: { borderTop: '1px solid var(--border)', marginTop: 12, paddingTop: 20, display: 'flex', alignItems: 'center', gap: 16 } },
+      React.createElement(Btn, { icon: Icons.save, onClick: () => { setSaved(true); setTimeout(() => setSaved(false), 2500); } }, t('Сохранить состав', 'Құрамды сақтау')),
+      saved && React.createElement('span', { style: { fontSize: 14, color: 'var(--success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 } }, Icons.checkCircle, t('Сохранено', 'Сақталды')),
+    ),
+  );
+}
+
+function StaffPage() {
+  const { t } = useLang();
+  const rows = [
+    { ini: 'ИО', name: t('Оспанов Ислам', 'Оспанов Ислам'), email: 'i.ospanov@satti.kz', role: 'admin', status: 'active', last: t('сейчас', 'қазір') },
+    { ini: 'КА', name: t('Касымов Алибек', 'Қасымов Әлібек'), email: 'a.kassymov@satti.kz', role: 'expert', status: 'active', last: t('2 ч назад', '2 сағ бұрын') },
+    { ini: 'ЕД', name: t('Ержанова Дана', 'Ержанова Дана'), email: 'd.yerzhanova@satti.kz', role: 'expert', status: 'active', last: t('вчера', 'кеше') },
+    { ini: 'НТ', name: t('Нурланова Томирис', 'Нұрланова Томирис'), email: 't.nurlanova@satti.kz', role: 'operator', status: 'active', last: t('3 дня назад', '3 күн бұрын') },
+    { ini: 'СБ', name: t('Сериков Бауыржан', 'Сериков Бауыржан'), email: 'b.serikov@satti.kz', role: 'operator', status: 'invited', last: '—' },
+  ];
+
+  const roleMap = {
+    admin: { bg: 'var(--primary-light)', color: 'var(--primary)', label: t('Администратор', 'Әкімші') },
+    expert: { bg: 'var(--accent-light)', color: 'var(--accent)', label: t('Эксперт', 'Сарапшы') },
+    operator: { bg: 'rgba(94,110,107,0.1)', color: 'var(--muted)', label: t('Оператор', 'Оператор') },
+  };
+
+  const perms = [
+    { label: t('Создание и редактирование тестов', 'Тесттерді жасау және өңдеу'), admin: true, expert: false, operator: false },
+    { label: t('Проверка практических заданий', 'Практикалық тапсырмаларды тексеру'), admin: true, expert: true, operator: false },
+    { label: t('Приглашение кандидатов', 'Кандидаттарды шақыру'), admin: true, expert: false, operator: true },
+    { label: t('Просмотр статистики', 'Статистиканы қарау'), admin: true, expert: true, operator: true },
+    { label: t('Управление сотрудниками', 'Қызметкерлерді басқару'), admin: true, expert: false, operator: false },
+  ];
+
+  const Cell = (on) => React.createElement('div', { style: { display: 'flex', justifyContent: 'center', color: on ? 'var(--success)' : 'var(--border)' } }, on ? Icons.checkCircle : React.createElement('span', { style: { fontSize: 18, color: 'var(--border)' } }, '—'));
+
+  return React.createElement(AdminShell, { active: 'staff' },
+    React.createElement('div', { style: { maxWidth: 1100, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
+        React.createElement('div', null,
+          React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Сотрудники и права', 'Қызметкерлер мен құқықтар')),
+          React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Команда центра сертификации и роли доступа', 'Сертификаттау орталығының командасы және рұқсат рөлдері')),
+        ),
+        React.createElement(Btn, { icon: Icons.plus }, t('Добавить сотрудника', 'Қызметкер қосу')),
+      ),
+
+      // Staff table
+      React.createElement('div', { style: { marginBottom: 32 } },
+        React.createElement(DataTable, {
+          columns: [
+            { key: 'name', label: t('Сотрудник', 'Қызметкер'), render: r => React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 12 } }, React.createElement(Avatar, { initials: r.ini, size: 36 }), React.createElement('div', { style: { minWidth: 0 } }, React.createElement('div', { style: { fontWeight: 600, whiteSpace: 'nowrap' } }, r.name), React.createElement('div', { style: { fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.email))) },
+            { key: 'role', label: t('Роль', 'Рөл'), render: r => React.createElement('span', { style: { display: 'inline-flex', padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, background: roleMap[r.role].bg, color: roleMap[r.role].color } }, roleMap[r.role].label) },
+            { key: 'status', label: t('Статус', 'Мәртебесі'), render: r => React.createElement(StatusPill, { status: r.status, label: r.status === 'active' ? t('АКТИВЕН', 'БЕЛСЕНДІ') : t('ПРИГЛАШЁН', 'ШАҚЫРЫЛДЫ') }) },
+            { key: 'last', label: t('Был(а)', 'Болды'), render: r => React.createElement('span', { style: { color: 'var(--muted)', whiteSpace: 'nowrap' } }, r.last) },
+            { key: 'a', label: '', render: () => React.createElement('button', { style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', display: 'flex' } }, Icons.edit) },
+          ],
+          rows,
+        }),
+      ),
+
+      // Permissions matrix
+      React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600, marginBottom: 16 } }, t('Матрица прав доступа', 'Қол жеткізу құқықтарының матрицасы')),
+      React.createElement('div', { style: { overflowX: 'auto', borderRadius: 16, border: '1px solid var(--border)', background: 'var(--surface)', marginBottom: 32 } },
+        React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse', minWidth: 560 } },
+          React.createElement('thead', null,
+            React.createElement('tr', null,
+              React.createElement('th', { style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'left', borderBottom: '2px solid var(--border)' } }, t('Разрешение', 'Рұқсат')),
+              [t('Администратор', 'Әкімші'), t('Эксперт', 'Сарапшы'), t('Оператор', 'Оператор')].map(h => React.createElement('th', { key: h, style: { padding: '14px 16px', fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center', borderBottom: '2px solid var(--border)' } }, h)),
+            )
+          ),
+          React.createElement('tbody', null,
+            perms.map((p, i) => React.createElement('tr', { key: i },
+              React.createElement('td', { style: { padding: '14px 16px', fontSize: 15, fontWeight: 500, borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, p.label),
+              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.admin)),
+              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.expert)),
+              React.createElement('td', { style: { padding: '14px 16px', borderBottom: i < perms.length-1 ? '1px solid var(--border)' : 'none' } }, Cell(p.operator)),
+            ))
+          ),
+        ),
+      ),
+
+      // Commission Section
+      React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600, marginBottom: 16 } }, t('Состав экзаменационной комиссии', 'Емтихан комиссиясының құрамы')),
+      React.createElement(CommissionSection),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(StaffPage));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>

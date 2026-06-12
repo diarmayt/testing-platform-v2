@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчёт за день — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --doc-ink: #111111;
+    --doc-muted: #555555;
+    --doc-line: #222222;
+    --doc-faint: #d9d6cf;
+    --accent: #0F766E;
+    --success: #167A3C;
+    --danger: #B3261E;
+    --warning: #B68A2E;
+    --font-heading: 'Lora', 'PT Serif', Georgia, serif;
+    --font-body: 'Manrope', 'PT Sans', system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--doc-ink);
+    background: #6b6b6b;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Screen-only toolbar ───────────────────────── */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    background: #1f1f1f;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    flex-wrap: wrap;
+  }
+  .toolbar-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn svg { width: 17px; height: 17px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #0C5F58; }
+  .btn-ghost { background: transparent; color: #d8d8d8; border: 1px solid #4a4a4a; }
+  .btn-ghost:hover { background: #2c2c2c; color: #fff; }
+
+  /* ── Document sheet ────────────────────────────── */
+  .sheet-wrap { padding: 28px 16px 60px; display: flex; justify-content: center; }
+  .sheet {
+    width: 210mm;
+    max-width: 100%;
+    min-height: 297mm;
+    background: #fff;
+    padding: 22mm 20mm 20mm;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.35);
+  }
+
+  /* ── Letterhead ────────────────────────────────── */
+  .letterhead {
+    text-align: center;
+    border-bottom: 2px solid var(--doc-line);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .letterhead .org-kz { font-size: 12.5px; font-weight: 600; color: var(--doc-ink); }
+  .letterhead .org-ru { font-size: 12.5px; color: var(--doc-muted); margin-top: 2px; }
+  .letterhead .brand {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    margin: 8px 0 2px;
+  }
+
+  /* ── Document title ────────────────────────────── */
+  .doc-title { text-align: center; margin-bottom: 6px; }
+  .doc-title h1 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .doc-date {
+    text-align: center;
+    font-size: 14px;
+    color: var(--doc-muted);
+    margin-bottom: 26px;
+  }
+  .doc-date strong { color: var(--doc-ink); font-weight: 600; }
+
+  /* ── Summary cards ─────────────────────────────── */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .sum-card {
+    border: 1px solid var(--doc-line);
+    border-radius: 6px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .sum-card .val {
+    font-family: var(--font-heading);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .sum-card .lbl {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--doc-muted);
+    margin-top: 8px;
+  }
+  .sum-card.total .val { color: var(--doc-ink); }
+  .sum-card.pass .val { color: var(--success); }
+  .sum-card.fail .val { color: var(--danger); }
+  .sum-card.practice .val { color: var(--accent); }
+
+  /* ── Results table ─────────────────────────────── */
+  .section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--doc-muted);
+    margin: 0 0 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--doc-faint);
+  }
+  table.results {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 26px;
+    font-size: 12.5px;
+  }
+  table.results th,
+  table.results td {
+    border: 1px solid var(--doc-line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  table.results th {
+    background: #f3f1ec;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  table.results td.center { text-align: center; }
+  table.results tr:nth-child(even) td { background: #fafaf8; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .tag.ok { color: var(--success); }
+  .tag.no { color: var(--danger); }
+  .tag.wait { color: var(--warning); }
+  .tag.dash { color: var(--doc-muted); border-color: var(--doc-faint); }
+  .ork-badge {
+    display: inline-block;
+    min-width: 26px;
+    padding: 2px 8px;
+    border: 1px solid var(--doc-line);
+    border-radius: 4px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .score { font-weight: 700; }
+  .score.ok { color: var(--success); }
+  .score.no { color: var(--danger); }
+
+  .doc-footer {
+    margin-top: 30px;
+    padding-top: 12px;
+    border-top: 1px solid var(--doc-faint);
+    font-size: 11px;
+    color: var(--doc-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .doc-footer .sign-inline { display: flex; align-items: flex-end; gap: 10px; }
+  .doc-footer .sign-inline .rule { width: 160px; border-bottom: 1px solid var(--doc-line); height: 16px; }
+
+  /* ── Print rules ───────────────────────────────── */
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: #fff; }
+    .toolbar { display: none !important; }
+    .sheet-wrap { padding: 0; }
+    .sheet { width: auto; min-height: auto; box-shadow: none; padding: 0; }
+    table.results th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sum-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 760px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .sheet { padding: 18px 16px; }
+    table.results { font-size: 11.5px; }
+    table.results th, table.results td { padding: 6px 7px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Toolbar (screen only) ───────────────────────── -->
+<div class="toolbar">
+  <span class="toolbar-title">Отчёт о результатах экзамена</span>
+  <div class="toolbar-actions">
+    <button class="btn btn-ghost" onclick="window.location.href='admin-journal.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Назад
+    </button>
+    <button class="btn btn-ghost" onclick="window.location.href='index.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Все экраны
+    </button>
+    <button class="btn btn-ghost" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Скачать PDF
+    </button>
+    <button class="btn btn-primary" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Печать
+    </button>
+  </div>
+</div>
+
+<!-- ── Document ────────────────────────────────────── -->
+<div class="sheet-wrap">
+  <div class="sheet">
+
+    <!-- Letterhead -->
+    <div class="letterhead">
+      <div class="org-kz">«СӘТТІ» ІТ мамандарды сертификаттау орталығы» ЖШС</div>
+      <div class="org-ru">ТОО «Центр сертификации ІТ-специалистов «СӘТТІ»»</div>
+      <div class="brand">СӘТТІ</div>
+    </div>
+
+    <!-- Title -->
+    <div class="doc-title">
+      <h1>Отчёт о результатах экзамена</h1>
+    </div>
+    <p class="doc-date">за <strong>12 июня 2026 г.</strong></p>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="sum-card total">
+        <div class="val">24</div>
+        <div class="lbl">Всего кандидатов</div>
+      </div>
+      <div class="sum-card pass">
+        <div class="val">18</div>
+        <div class="lbl">Сдали тест</div>
+      </div>
+      <div class="sum-card fail">
+        <div class="val">6</div>
+        <div class="lbl">Не сдали</div>
+      </div>
+      <div class="sum-card practice">
+        <div class="val">11</div>
+        <div class="lbl">Сдали практику</div>
+      </div>
+    </div>
+
+    <!-- Results table -->
+    <div class="section-label">Результаты кандидатов</div>
+    <table class="results">
+      <thead>
+        <tr>
+          <th style="width:36px">№</th>
+          <th style="width:24%">ФИО</th>
+          <th>Профессия</th>
+          <th style="width:58px">Уровень</th>
+          <th style="width:78px">Тест&nbsp;(%)</th>
+          <th style="width:120px">Статус теста</th>
+          <th style="width:130px">Статус практики</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+
+    <div class="doc-footer">
+      <span>Документ сформирован в системе оценки квалификации «СӘТТІ» · 12.06.2026</span>
+      <span class="sign-inline">Ответственный: <span class="rule"></span></span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var data = [
+    { name: 'Ахметов Нурлан', prof: 'Сетевой администратор', ork: 5, theory: 82, tpass: true, practice: 'ok' },
+    { name: 'Смагулова Камила', prof: 'Специалист по ИБ', ork: 6, theory: 91, tpass: true, practice: 'ok' },
+    { name: 'Ержанова Дана', prof: 'Системный администратор', ork: 4, theory: 55, tpass: false, practice: 'dash' },
+    { name: 'Бекжанов Мурат', prof: 'Администратор БД', ork: 5, theory: 76, tpass: true, practice: 'wait' },
+    { name: 'Исаева Сауле', prof: 'Инженер по ИВС', ork: 4, theory: 64, tpass: false, practice: 'dash' },
+    { name: 'Тулеуов Арман', prof: 'Сетевой администратор', ork: 5, theory: 88, tpass: true, practice: 'ok' },
+    { name: 'Нурланова Томирис', prof: 'Специалист по ИБ', ork: 6, theory: 79, tpass: true, practice: 'wait' },
+    { name: 'Сериков Бауыржан', prof: 'Системный администратор', ork: 5, theory: 71, tpass: true, practice: 'no' }
+  ];
+
+  function theoryStatus(pass) {
+    return pass
+      ? '<span class="tag ok">Сдал</span>'
+      : '<span class="tag no">Не сдал</span>';
+  }
+  function practiceStatus(code) {
+    if (code === 'ok')   return '<span class="tag ok">Сдал</span>';
+    if (code === 'no')   return '<span class="tag no">Не сдал</span>';
+    if (code === 'wait') return '<span class="tag wait">Не проверено</span>';
+    return '<span class="tag dash">—</span>';
+  }
+
+  var html = '';
+  data.forEach(function(r, i) {
+    html +=
+      '<tr>' +
+        '<td class="center">' + (i + 1) + '</td>' +
+        '<td>' + r.name + '</td>' +
+        '<td>' + r.prof + '</td>' +
+        '<td class="center"><span class="ork-badge">' + r.ork + '</span></td>' +
+        '<td class="center"><span class="score ' + (r.tpass ? 'ok' : 'no') + '">' + r.theory + '%</span></td>' +
+        '<td class="center">' + theoryStatus(r.tpass) + '</td>' +
+        '<td class="center">' + practiceStatus(r.practice) + '</td>' +
+      '</tr>';
+  });
+  document.getElementById('rows').innerHTML = html;
+</script>
+
+</body>
+</html>

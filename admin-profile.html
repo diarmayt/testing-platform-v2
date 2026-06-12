@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль — СӘТТІ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="satti-tokens.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="satti-components.jsx"></script>
+<script type="text/babel" src="admin-shell.jsx"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#FBFAF7"/>
+  <rect x="30" y="30" width="40" height="40" rx="9" fill="#0F766E"/>
+  <text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="Georgia, 'Lora', serif" font-size="15" font-weight="700" fill="#ffffff">СӘ</text>
+</svg>
+</template>
+
+<div id="root"></div>
+<script type="text/babel">
+
+function Profile() {
+  const { t } = useLang();
+  const [name, setName] = React.useState(t('Оспанов Ислам', 'Оспанов Ислам'));
+  const [email] = React.useState('i.ospanov@satti.kz');
+  const [phone, setPhone] = React.useState('+7 701 234 56 78');
+  const [notifNew, setNotifNew] = React.useState(true);
+  const [notifDigest, setNotifDigest] = React.useState(false);
+
+  const SectionCard = ({ title, children }) => React.createElement(Card, { style: { marginBottom: 20 } },
+    React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 600, marginBottom: 20 } }, title),
+    children
+  );
+
+
+  return React.createElement(AdminShell, { active: 'profile' },
+    React.createElement('div', { style: { maxWidth: 820, margin: '0 auto', padding: '32px 28px' } },
+      React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Профиль', 'Профиль')),
+      React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)', marginBottom: 28 } }, t('Личные данные и настройки учётной записи', 'Жеке деректер және тіркелгі баптаулары')),
+
+      // Identity header
+      React.createElement(Card, { style: { marginBottom: 20, display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' } },
+        React.createElement(Avatar, { initials: 'ИО', size: 72 }),
+        React.createElement('div', { style: { flex: 1, minWidth: 0 } },
+          React.createElement('div', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600 } }, name),
+          React.createElement('div', { style: { fontSize: 15, color: 'var(--muted)', marginBottom: 8 } }, email),
+          React.createElement('span', { style: { display: 'inline-flex', padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600, background: 'var(--primary-light)', color: 'var(--primary)' } }, t('Администратор', 'Әкімші')),
+        ),
+        React.createElement(Btn, { variant: 'secondary', size: 'sm', icon: Icons.image }, t('Сменить фото', 'Фотоны өзгерту')),
+      ),
+
+      // Personal data
+      React.createElement(SectionCard, { title: t('Личные данные', 'Жеке деректер') },
+        React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: ' 0 16px' } },
+          React.createElement(FormInput, { label: t('ФИО', 'Аты-жөні'), value: name, onChange: setName }),
+          React.createElement(FormInput, { label: 'Email', value: email, disabled: true }),
+          React.createElement(FormInput, { label: t('Телефон', 'Телефон'), value: phone, onChange: setPhone }),
+          React.createElement(FormSelect, { label: t('Должность', 'Лауазым'), value: 'admin', onChange: () => {}, options: [{value:'admin',label:t('Руководитель центра','Орталық басшысы')}] }),
+        ),
+        React.createElement('div', { style: { marginTop: 8 } }, React.createElement(Btn, { icon: Icons.save }, t('Сохранить изменения', 'Өзгерістерді сақтау'))),
+      ),
+
+      // Security
+      React.createElement(SectionCard, { title: t('Безопасность', 'Қауіпсіздік') },
+        React.createElement(FormInput, { label: t('Текущий пароль', 'Ағымдағы құпия сөз'), type: 'password', placeholder: '••••••••' }),
+        React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0 16px' } },
+          React.createElement(FormInput, { label: t('Новый пароль', 'Жаңа құпия сөз'), type: 'password', placeholder: t('Введите новый пароль', 'Жаңа құпия сөзді енгізіңіз') }),
+          React.createElement(FormInput, { label: t('Повтор пароля', 'Құпия сөзді қайталау'), type: 'password', placeholder: t('Повторите пароль', 'Құпия сөзді қайталаңыз') }),
+        ),
+        React.createElement(Btn, { variant: 'secondary', icon: Icons.shield }, t('Обновить пароль', 'Құпия сөзді жаңарту')),
+      ),
+
+      React.createElement('div', { style: { textAlign: 'center', marginTop: 8 } },
+        React.createElement('button', { onClick: () => window.location.href = 'login.html', style: { display: 'inline-flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: 'var(--danger)', fontSize: 15, fontWeight: 600, cursor: 'pointer', padding: 12 } }, Icons.logOut, t('Выйти из системы', 'Жүйеден шығу')),
+      ),
+    )
+  );
+}
+
+function App() {
+  return React.createElement(LangProvider, null, React.createElement(Profile));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+</script>
+</body>
+</html>
