@@ -188,74 +188,131 @@
     </div>
 
     <!-- Commission composition -->
-    <p class="commission-heading">Экзаменационная комиссия в составе:</p>
-
-    <!-- Column headers -->
-    <div class="members-head" style="display:grid;grid-template-columns:1fr 1fr 1fr 26px">
-      <span>ФИО</span><span>Должность</span><span>Организация</span><span></span>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+      <p class="commission-heading" style="margin-bottom:0">Экзаменационная комиссия в составе:</p>
+      <button class="add-btn" style="margin:0;font-size:12px;color:var(--accent)" onclick="toggleEdit()" id="editBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        Изменить состав
+      </button>
     </div>
 
-    <!-- Chair -->
-    <div class="person-block">
-      <div class="person-role-label">Председатель Экзаменационной комиссии</div>
-      <div class="person-row">
-        <input class="fld" placeholder="Фамилия Имя Отчество">
-        <input class="fld" placeholder="должность">
-        <input class="fld" placeholder="организация">
-        <span style="width:26px"></span>
+    <!-- Static view -->
+    <div id="commissionStatic">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:6px">
+        <thead>
+          <tr>
+            <th style="text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--doc-muted);padding:0 8px 6px 0;border-bottom:1px solid var(--doc-faint);width:26%">Роль</th>
+            <th style="text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--doc-muted);padding:0 8px 6px;border-bottom:1px solid var(--doc-faint);width:30%">ФИО</th>
+            <th style="text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--doc-muted);padding:0 8px 6px;border-bottom:1px solid var(--doc-faint);width:22%">Должность</th>
+            <th style="text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--doc-muted);padding:0 0 6px 8px;border-bottom:1px solid var(--doc-faint)">Организация</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:8px 8px 8px 0;font-weight:600;font-size:12px;border-bottom:1px solid var(--doc-faint)">Председатель</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">Сейткали Арман Бекович</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">Директор</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">ТОО «СӘТТІ»</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 8px 8px 0;font-size:12px;border-bottom:1px solid var(--doc-faint)">Член комиссии</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">Нурланова Томирис Ерлановна</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">Эксперт</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">ТОО «СӘТТІ»</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 8px 8px 0;font-size:12px;border-bottom:1px solid var(--doc-faint)">Член комиссии</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">Сериков Бауыржан Маратович</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">Эксперт</td>
+            <td style="padding:8px;border-bottom:1px solid var(--doc-faint)">ТОО «СӘТТІ»</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 8px 8px 0;font-weight:600;font-size:12px">Секретарь</td>
+            <td style="padding:8px">Абенова Дина Серикбаевна</td>
+            <td style="padding:8px">Администратор</td>
+            <td style="padding:8px">ТОО «СӘТТІ»</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:11.5px;color:var(--doc-muted);margin-top:4px">Состав берётся из настроек сотрудников, при необходимости можно отредактировать перед печатью.</p>
+    </div>
+
+    <!-- Edit view (hidden by default) -->
+    <div id="commissionEdit" style="display:none">
+      <!-- Column headers -->
+      <div class="members-head" style="display:grid;grid-template-columns:1fr 1fr 1fr 26px">
+        <span>ФИО</span><span>Должность</span><span>Организация</span><span></span>
       </div>
-    </div>
-
-    <hr class="section-sep">
-
-    <!-- Members -->
-    <div class="person-role-label" style="margin-bottom:8px">Члены комиссии:</div>
-    <div id="members"></div>
-    <button class="add-btn" onclick="addMember()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      Добавить члена комиссии
-    </button>
-
-    <hr class="section-sep">
-
-    <!-- Secretary -->
-    <div class="person-block">
-      <div class="person-role-label">Секретарь комиссии:</div>
-      <div class="person-row">
-        <input class="fld" placeholder="Фамилия Имя Отчество">
-        <input class="fld" placeholder="должность">
-        <input class="fld" placeholder="организация">
-        <span style="width:26px"></span>
+      <!-- Chair -->
+      <div class="person-block">
+        <div class="person-role-label">Председатель Экзаменационной комиссии</div>
+        <div class="person-row">
+          <input class="fld" value="Сейткали Арман Бекович">
+          <input class="fld" value="Директор">
+          <input class="fld" value="ТОО «СӘТТІ»">
+          <span style="width:26px"></span>
+        </div>
+      </div>
+      <hr class="section-sep">
+      <div class="person-role-label" style="margin-bottom:8px">Члены комиссии:</div>
+      <div id="members"></div>
+      <button class="add-btn" onclick="addMember()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Добавить члена комиссии
+      </button>
+      <hr class="section-sep">
+      <div class="person-block">
+        <div class="person-role-label">Секретарь комиссии:</div>
+        <div class="person-row">
+          <input class="fld" value="Абенова Дина Серикбаевна">
+          <input class="fld" value="Администратор">
+          <input class="fld" value="ТОО «СӘТТІ»">
+          <span style="width:26px"></span>
+        </div>
       </div>
     </div>
 
     <!-- Decision text -->
     <div class="decision-block">
       <p>Рассмотрев результаты процедуры признания профессиональной квалификации <strong>РЕШИЛА:</strong></p>
-      <p>Признать профессиональную квалификацию по профессиям и уровню ОРК и выдать Документ о признании профессиональной квалификации.</p>
     </div>
 
-    <!-- Candidates table -->
-    <table class="candidates">
-      <thead>
-        <tr>
-          <th style="width:34px">№<br>п/п</th>
-          <th style="width:20%">ФИО<br>экзаменуемого</th>
-          <th>Результаты теоретического<br>этапа экзамена</th>
-          <th style="width:110px">Результаты практического<br>этапа задания</th>
-          <th>Профессия</th>
-          <th style="width:60px">Уровень<br>ОРК</th>
-          <th style="width:90px">Срок<br>действия</th>
-        </tr>
-      </thead>
-      <tbody id="candidates"></tbody>
-    </table>
-    <div class="table-tools">
-      <button class="add-btn" onclick="addRow()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        Добавить строку
-      </button>
+    <!-- Block 1: Passed -->
+    <div style="margin-bottom:22px">
+      <p style="font-size:13.5px;font-weight:600;margin-bottom:10px">1. Признать профессиональную квалификацию и выдать Документ о признании следующим лицам:</p>
+      <table class="candidates">
+        <thead>
+          <tr>
+            <th style="width:34px">№<br>п/п</th>
+            <th style="width:22%">ФИО экзаменуемого</th>
+            <th>Результаты теоретического этапа экзамена</th>
+            <th style="width:110px">Результаты практического этапа задания</th>
+            <th>Профессия</th>
+            <th style="width:60px">Уровень ОРК</th>
+          </tr>
+        </thead>
+        <tbody id="passed-candidates"></tbody>
+      </table>
     </div>
+
+    <!-- Block 2: Failed -->
+    <div style="margin-bottom:22px">
+      <p style="font-size:13.5px;font-weight:600;margin-bottom:10px">2. Отказать в признании профессиональной квалификации следующим лицам (неудовлетворительный результат):</p>
+      <table class="candidates">
+        <thead>
+          <tr>
+            <th style="width:34px">№<br>п/п</th>
+            <th style="width:22%">ФИО экзаменуемого</th>
+            <th>Результаты теоретического этапа экзамена</th>
+            <th style="width:110px">Результаты практического этапа задания</th>
+            <th>Профессия</th>
+            <th style="width:60px">Уровень ОРК</th>
+          </tr>
+        </thead>
+        <tbody id="failed-candidates"></tbody>
+      </table>
+    </div>
+
 
     <!-- Signatures -->
     <div class="signatures">
@@ -303,20 +360,29 @@
 </div>
 
 <script>
+  /* ── Commission toggle ── */
+  var editMode = false;
+  function toggleEdit() {
+    editMode = !editMode;
+    document.getElementById('commissionStatic').style.display = editMode ? 'none' : 'block';
+    document.getElementById('commissionEdit').style.display = editMode ? 'block' : 'none';
+    document.getElementById('editBtn').textContent = editMode ? '✓ Готово' : ' Изменить состав';
+  }
+
   /* ── Commission members ── */
   var memberCount = 0;
   var membersBox = document.getElementById('members');
 
-  function addMember() {
+  function addMember(name, pos, org) {
     memberCount++;
     var row = document.createElement('div');
     row.className = 'person-block';
     row.style.marginBottom = '8px';
     row.innerHTML =
       '<div class="person-row">' +
-        '<input class="fld" placeholder="Фамилия Имя Отчество">' +
-        '<input class="fld" placeholder="должность">' +
-        '<input class="fld" placeholder="организация">' +
+        '<input class="fld" value="' + (name||'') + '" placeholder="Фамилия Имя Отчество">' +
+        '<input class="fld" value="' + (pos||'') + '" placeholder="должность">' +
+        '<input class="fld" value="' + (org||'') + '" placeholder="организация">' +
         '<button class="remove-btn" title="Удалить" onclick="this.closest(\'.person-block\').remove()">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
         '</button>' +
@@ -345,39 +411,62 @@
     '</td>';
   }
 
-  /* ── Candidates table ── */
+  /* ── Candidates tables ── */
   var profOptions = ['Инженер по ИВС', 'Администратор БД', 'Системный администратор', 'Сетевой администратор', 'Специалист по ИБ', 'Техник по обслуживанию компьютерных устройств'];
-  var candidatesBox = document.getElementById('candidates');
-  var rowCount = 0;
 
-  function addRow(data) {
-    rowCount++;
+  function makeTheoryCell(val) {
+    var cls = val === 'Сдал' ? 'style="color:var(--success);font-weight:700"' : val === 'Не сдал' ? 'style="color:var(--danger);font-weight:700"' : '';
+    return '<td class="center"><span ' + cls + '>' + (val || '—') + '</span></td>';
+  }
+
+  function makeProfCell(prof) {
+    var opts = profOptions.map(function(p) {
+      return '<option' + (prof === p ? ' selected' : '') + '>' + p + '</option>';
+    }).join('');
+    return '<td><select class="cell-input"><option value=""></option>' + opts + '</select></td>';
+  }
+
+  var passedCount = 0;
+  var failedCount = 0;
+
+  function addPassedRow(data) {
+    passedCount++;
     data = data || {};
     var tr = document.createElement('tr');
-    var profOpts = profOptions.map(function(p) {
-      return '<option' + (data.prof === p ? ' selected' : '') + '>' + p + '</option>';
-    }).join('');
-    var theoryVal = data.theory || '';
-    var theoryClass = theoryVal === 'Сдал' ? 'style="color:var(--success);font-weight:700"' : theoryVal === 'Не сдал' ? 'style="color:var(--danger);font-weight:700"' : '';
     tr.innerHTML =
-      '<td class="center" style="font-weight:600;color:var(--doc-muted)">' + rowCount + '</td>' +
+      '<td class="center" style="font-weight:600;color:var(--doc-muted)">' + passedCount + '</td>' +
       '<td><input class="cell-input" value="' + (data.name || '') + '" placeholder="Фамилия Имя Отчество"></td>' +
-      '<td class="center"><span ' + theoryClass + '>' + (theoryVal || '—') + '</span></td>' +
-      makePracticeCell(data.practiceVal || '') +
-      '<td><select class="cell-input"><option value=""></option>' + profOpts + '</select></td>' +
-      '<td class="center"><input class="cell-input" style="text-align:center;width:40px" value="' + (data.ork || '') + '" placeholder="—"></td>' +
-      '<td class="center"><input class="cell-input" style="text-align:center" value="' + (data.valid || '') + '" placeholder="дд.мм.гггг"></td>';
-    candidatesBox.appendChild(tr);
+      makeTheoryCell(data.theory) +
+      makePracticeCell(data.practiceVal || 'pass') +
+      makeProfCell(data.prof) +
+      '<td class="center"><input class="cell-input" style="text-align:center;width:40px" value="' + (data.ork || '') + '" placeholder="—"></td>';
+    document.getElementById('passed-candidates').appendChild(tr);
+  }
+
+  function addFailedRow(data) {
+    failedCount++;
+    data = data || {};
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="center" style="font-weight:600;color:var(--doc-muted)">' + failedCount + '</td>' +
+      '<td><input class="cell-input" value="' + (data.name || '') + '" placeholder="Фамилия Имя Отчество"></td>' +
+      makeTheoryCell(data.theory) +
+      '<td class="center" style="color:var(--doc-muted)">—</td>' +
+      makeProfCell(data.prof) +
+      '<td class="center"><input class="cell-input" style="text-align:center;width:40px" value="' + (data.ork || '') + '" placeholder="—"></td>';
+    document.getElementById('failed-candidates').appendChild(tr);
   }
 
   /* ── Seed data ── */
-  addMember();
-  addMember();
-  addRow({ name: 'Ахметов Нурлан',    theory: 'Сдал',    practiceVal: 'pass', prof: 'Сетевой администратор',    ork: '5', valid: '14.10.2029' });
-  addRow({ name: 'Смагулова Камила',  theory: 'Сдал',    practiceVal: 'pass', prof: 'Специалист по ИБ',          ork: '6', valid: '14.10.2029' });
-  addRow({ name: 'Ержанова Дана',     theory: 'Не сдал', practiceVal: '',     prof: 'Системный администратор',   ork: '4', valid: '' });
-  addRow();
-  addRow();
+  addMember('Нурланова Томирис Ерлановна', 'Эксперт', 'ТОО «СӘТТІ»');
+  addMember('Сериков Бауыржан Маратович', 'Эксперт', 'ТОО «СӘТТІ»');
+
+  addPassedRow({ name: 'Ахметов Нурлан',   theory: 'Сдал', practiceVal: 'pass', prof: 'Сетевой администратор', ork: '5' });
+  addPassedRow({ name: 'Смагулова Камила', theory: 'Сдал', practiceVal: 'pass', prof: 'Специалист по ИБ',      ork: '6' });
+  addPassedRow({ name: 'Тулеуов Арман',    theory: 'Сдал', practiceVal: 'pass', prof: 'Инженер по ИВС',        ork: '6' });
+
+  addFailedRow({ name: 'Ержанова Дана',     theory: 'Не сдал', prof: 'Системный администратор',   ork: '4' });
+  addFailedRow({ name: 'Бекжанов Мурат',    theory: 'Не сдал', prof: 'Администратор БД',         ork: '5' });
 </script>
 </body>
 </html>
