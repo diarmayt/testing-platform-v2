@@ -414,16 +414,11 @@
   /* ── Candidates tables ── */
   var profOptions = ['Инженер по ИВС', 'Администратор БД', 'Системный администратор', 'Сетевой администратор', 'Специалист по ИБ', 'Техник по обслуживанию компьютерных устройств'];
 
-  function makeTheoryCell(val) {
-    var cls = val === 'Сдал' ? 'style="color:var(--success);font-weight:700"' : val === 'Не сдал' ? 'style="color:var(--danger);font-weight:700"' : '';
+  function makeTheoryCell(val, passed) {
+    var cls = passed
+      ? 'style="color:var(--success);font-weight:700"'
+      : 'style="color:var(--danger);font-weight:700"';
     return '<td class="center"><span ' + cls + '>' + (val || '—') + '</span></td>';
-  }
-
-  function makeProfCell(prof) {
-    var opts = profOptions.map(function(p) {
-      return '<option' + (prof === p ? ' selected' : '') + '>' + p + '</option>';
-    }).join('');
-    return '<td><select class="cell-input"><option value=""></option>' + opts + '</select></td>';
   }
 
   var passedCount = 0;
@@ -431,29 +426,31 @@
 
   function addPassedRow(data) {
     passedCount++;
-    data = data || {};
     var tr = document.createElement('tr');
     tr.innerHTML =
       '<td class="center" style="font-weight:600;color:var(--doc-muted)">' + passedCount + '</td>' +
-      '<td><input class="cell-input" value="' + (data.name || '') + '" placeholder="Фамилия Имя Отчество"></td>' +
-      makeTheoryCell(data.theory) +
-      makePracticeCell(data.practiceVal || 'pass') +
-      makeProfCell(data.prof) +
-      '<td class="center"><input class="cell-input" style="text-align:center;width:40px" value="' + (data.ork || '') + '" placeholder="—"></td>';
+      '<td style="font-size:12px">' + (data.name || '') + '</td>' +
+      makeTheoryCell(data.theory, true) +
+      makePracticeCell('pass') +
+      '<td style="font-size:12px">' + (data.prof || '') + '</td>' +
+      '<td class="center" style="font-weight:600">' + (data.ork || '') + '</td>';
     document.getElementById('passed-candidates').appendChild(tr);
   }
 
   function addFailedRow(data) {
+    // practiceResult: 'fail' = сдал тест, провалил практику; '' = не сдал тест
     failedCount++;
-    data = data || {};
+    var practiceCell = data.practiceResult === 'fail'
+      ? '<td class="center"><span style="color:var(--danger);font-weight:700">Не сдал</span></td>'
+      : '<td class="center" style="color:var(--doc-muted)">—</td>';
     var tr = document.createElement('tr');
     tr.innerHTML =
       '<td class="center" style="font-weight:600;color:var(--doc-muted)">' + failedCount + '</td>' +
-      '<td><input class="cell-input" value="' + (data.name || '') + '" placeholder="Фамилия Имя Отчество"></td>' +
-      makeTheoryCell(data.theory) +
-      '<td class="center" style="color:var(--doc-muted)">—</td>' +
-      makeProfCell(data.prof) +
-      '<td class="center"><input class="cell-input" style="text-align:center;width:40px" value="' + (data.ork || '') + '" placeholder="—"></td>';
+      '<td style="font-size:12px">' + (data.name || '') + '</td>' +
+      makeTheoryCell(data.theory, data.theoryPassed) +
+      practiceCell +
+      '<td style="font-size:12px">' + (data.prof || '') + '</td>' +
+      '<td class="center" style="font-weight:600">' + (data.ork || '') + '</td>';
     document.getElementById('failed-candidates').appendChild(tr);
   }
 
@@ -461,12 +458,15 @@
   addMember('Нурланова Томирис Ерлановна', 'Эксперт', 'ТОО «СӘТТІ»');
   addMember('Сериков Бауыржан Маратович', 'Эксперт', 'ТОО «СӘТТІ»');
 
-  addPassedRow({ name: 'Ахметов Нурлан',   theory: 'Сдал', practiceVal: 'pass', prof: 'Сетевой администратор', ork: '5' });
-  addPassedRow({ name: 'Смагулова Камила', theory: 'Сдал', practiceVal: 'pass', prof: 'Специалист по ИБ',      ork: '6' });
-  addPassedRow({ name: 'Тулеуов Арман',    theory: 'Сдал', practiceVal: 'pass', prof: 'Инженер по ИВС',        ork: '6' });
+  addPassedRow({ name: 'Ахметов Нурлан',   theory: '82%', prof: 'Сетевой администратор', ork: '5' });
+  addPassedRow({ name: 'Смагулова Камила', theory: '91%', prof: 'Специалист по ИБ',      ork: '6' });
+  addPassedRow({ name: 'Тулеуов Арман',    theory: '88%', prof: 'Сетевой администратор', ork: '5' });
 
-  addFailedRow({ name: 'Ержанова Дана',     theory: 'Не сдал', prof: 'Системный администратор',   ork: '4' });
-  addFailedRow({ name: 'Бекжанов Мурат',    theory: 'Не сдал', prof: 'Администратор БД',         ork: '5' });
+  // Сдал тест, провалил практику
+  addFailedRow({ name: 'Бекжанов Мурат', theory: '76%', theoryPassed: true,  practiceResult: 'fail', prof: 'Администратор БД',       ork: '5' });
+  // Не сдали тест
+  addFailedRow({ name: 'Ержанова Дана',  theory: '55%', theoryPassed: false, practiceResult: '',     prof: 'Системный администратор', ork: '4' });
+  addFailedRow({ name: 'Исаева Сауле',   theory: '64%', theoryPassed: false, practiceResult: '',     prof: 'Инженер по ИВС',          ork: '4' });
 </script>
 </body>
 </html>

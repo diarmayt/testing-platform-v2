@@ -35,20 +35,27 @@ function AdminDashboard() {
           React.createElement('h1', { style: { fontFamily: 'var(--font-heading)', fontSize: 'var(--h1)', fontWeight: 600, marginBottom: 6 } }, t('Дашборд', 'Дашборд')),
           React.createElement('p', { style: { fontSize: 16, color: 'var(--muted)' } }, t('Добро пожаловать в систему управления сертификацией', 'Сертификаттауды басқару жүйесіне қош келдіңіз')),
         ),
-        React.createElement(Btn, { icon: Icons.plus, onClick: () => window.location.href = 'admin-create-test.html' }, t('Создать тест', 'Тест жасау')),
+        React.createElement('div', { style: { display: 'flex', gap: 12, flexWrap: 'wrap' } },
+          React.createElement(Btn, { variant: 'secondary', icon: Icons.users, onClick: () => window.location.href = 'admin-candidates.html' }, t('Создать кандидата', 'Кандидат қосу')),
+          React.createElement(Btn, { icon: Icons.plus, onClick: () => window.location.href = 'admin-create-test.html' }, t('Создать тест', 'Тест жасау')),
+        ),
       ),
 
-      // Metrics
-      React.createElement('div', { style: { display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' } },
-        React.createElement(MetricCard, { label: t('Тестов опубликовано', 'Жарияланған тест'), value: '24', change: '+12%', icon: Icons.fileText }),
-        React.createElement(MetricCard, { label: t('Тестирований за месяц', 'Айдағы тестілеу'), value: '142', icon: Icons.clipboard, accent: 'var(--accent)' }),
-        React.createElement(MetricCard, { label: t('Тестирований сегодня', 'Бүгін тестілеу'), value: '8', icon: Icons.clock, accent: 'var(--accent)' }),
+      // Metrics — фокус на месяц
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16, marginBottom: 28 } },
+        React.createElement(MetricCard, { label: t('Тестирований за месяц', 'Айдағы тестілеу'), value: '32', icon: Icons.clipboard }),
+        React.createElement(MetricCard, { label: t('Сдали', 'Тапсырды'), value: '21', icon: Icons.check, accent: 'var(--success-light)', iconColor: 'var(--success)', valueColor: 'var(--success)' }),
+        React.createElement(MetricCard, { label: t('Не сдали', 'Тапсырмады'), value: '11', icon: Icons.xCircle, accent: 'var(--danger-light)', iconColor: 'var(--danger)', valueColor: 'var(--danger)' }),
+        React.createElement(MetricCard, { label: t('Ждут решения комиссии', 'Комиссия шешімін күтуде'), value: '4', icon: Icons.clipboard, accent: 'var(--accent)', valueColor: 'var(--accent)', sub: t('сдали тест, практика/протокол не оформлены', 'тест тапсырды, практика/хаттама ресімделмеген') }),
       ),
 
       // Recent procedures
       React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
         React.createElement('h2', { style: { fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 600 } }, t('Последние тестирования', 'Соңғы рәсімдер')),
         React.createElement('a', { href: 'admin-journal.html', style: { fontSize: 14, fontWeight: 600, color: 'var(--primary)' } }, t('Смотреть все', 'Барлығын көру')),
+      ),
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'flex-end', marginBottom: 14 } },
+        React.createElement(Btn, { variant: 'secondary', size: 'sm', icon: Icons.fileText, onClick: () => window.location.href = 'admin-journal.html' }, t('Сформировать протокол', 'Хаттаманы құру')),
       ),
       React.createElement('div', { style: { marginBottom: 28 } },
         React.createElement(DataTable, {
